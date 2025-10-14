@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- Layout Inicial -->
+    <ScrollView
+        android:id="@+id/scrollInitialLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:id="@+id/initialLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <!-- Logo -->
+            <ImageView
+                android:id="@+id/ivLogo"
+                android:layout_width="350dp"
+                android:layout_height="375dp"
+                android:layout_marginBottom="16dp"
+                android:src="@drawable/logo" />
+
+            <!-- Botão Logar -->
+            <Button
+                android:id="@+id/btnLogar"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Logar" />
+
+            <!-- Botão Cadastrar -->
+            <Button
+                android:id="@+id/btnCadastrar"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Cadastrar" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Tela de Login -->
+    <ScrollView
+        android:id="@+id/scrollLoginFields"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/loginFields"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/tvLoginComentario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Coloque o seu e-mail e senha para Entrar!" />
+
+            <TextView
+                android:id="@+id/tvLoginMail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="E-mail:"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/etLoginMail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Digite seu e-mail"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tvLoginPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
+                android:text="Senha:"
+                android:textSize="18sp" />
+
+            <!-- Campo de senha com ícone de alternância -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/passwordInputLayoutLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:endIconMode="password_toggle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etLoginPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Digite sua senha"
+                    android:inputType="textPassword"
+                    android:textSize="18sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/btnEntrar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Entrar" />
+
+            <Button
+                android:id="@+id/btnEsqueceuSenha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Esqueceu sua senha" />
+
+            <Button
+                android:id="@+id/btnCancelarLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Cancelar" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Tela de Cadastro -->
+    <ScrollView
+        android:id="@+id/scrollRegisterFields"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/registerFields"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/tvRegistroComentario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Coloque o seu email e senha para se Cadastrar!" />
+
+            <TextView
+                android:id="@+id/tvRegisterMail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="E-mail:"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/etRegisterMail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:hint="Digite seu e-mail"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tvRegisterPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Senha:"
+                android:textSize="18sp" />
+
+            <!-- Campo de senha com ícone de alternância -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/passwordInputLayoutRegister"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:endIconMode="password_toggle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etRegisterPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Digite sua senha"
+                    android:inputType="textPassword"
+                    android:textSize="18sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/tvRegisterConfirmPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Confirmar senha:"
+                android:textSize="18sp" />
+
+            <!-- Campo para confirmar senha -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/passwordConfirmInputLayoutRegister"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:endIconMode="password_toggle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etRegisterPasswordConfirm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Confirme sua senha"
+                    android:inputType="textPassword"
+                    android:textSize="18sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/btnRegistrar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cadastrar" />
+
+            <Button
+                android:id="@+id/btnCancelarRegistro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Voltar" />
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>
