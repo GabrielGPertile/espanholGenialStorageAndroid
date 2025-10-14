@@ -15,7 +15,7 @@ class LoadingActivity : AppCompatActivity()
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.login_activity)
+        setContentView(R.layout.loading_activity)
 
         imageViewHolder = ImageViewHolder(this)
 
