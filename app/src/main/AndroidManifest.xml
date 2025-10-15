@@ -25,7 +25,7 @@
 
         <!-- Configuração do loginActivity -->
         <activity
-            android:name=".activity.loginActivity"
+            android:name=".activity.LoginActivity"
             android:exported="true">
 
             <intent-filter>
