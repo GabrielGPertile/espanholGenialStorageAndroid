@@ -96,4 +96,37 @@ class LoginActivity: AppCompatActivity()
         loginActivityViewHolder.scrollRegisterFields.visibility = View.GONE
         loginActivityViewHolder.scrollInitialLayout.visibility = View.GONE
     }
+
+    /**
+     * Função responsável por cancelar o processo de login, limpando os campos de login e
+     * retornando à tela inicial.
+     *
+     * Objetivo: Limpar os campos `etLoginMail` e `etLoginPassword`, ocultar o layout de login
+     * e exibir a tela inicial. Isso é feito quando o usuário clica no botão de cancelar login.
+     *
+     * Entradas: Não há parâmetros de entrada.
+     *
+     * Saídas: Não há retorno de valor.
+     *
+     * Caso de uso: Esta função é acionada quando o usuário interage com o botão de "Cancelar Login"
+     * no layout de login. Ela limpa os campos de email e senha e alterna a visibilidade dos layouts,
+     * ocultando o layout de login e mostrando o layout inicial.
+     *
+     * Exemplo de uso:
+     * - Antes da função ser chamada:
+     *   etLoginMail: "testeCasoUso@gmail.com"
+     *   etLoginPassword: "*****" (senha oculta por segurança)
+     * - Depois da função ser chamada:
+     *   etLoginMail: ""
+     *   etLoginPassword: ""
+     *   Layout de login oculto e layout inicial visível.
+     */
+    private fun cancelLogin() {
+        loginActivityViewHolder.etLoginMail.setText("")
+        loginActivityViewHolder.etLoginPassword.setText("")
+
+        loginActivityViewHolder.scrollLoginFields.visibility = View.GONE
+        loginActivityViewHolder.scrollRegisterFields.visibility = View.GONE
+        loginActivityViewHolder.scrollInitialLayout.visibility = View.VISIBLE
+    }
 }
