@@ -2,12 +2,16 @@ package com.example.espanholgenialstorageandroid.activity
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.espanholgenialstorageandroid.R
 import com.example.espanholgenialstorageandroid.viewHolder.ImageViewHolder
 import com.example.espanholgenialstorageandroid.viewHolder.LoginActivityViewHolder
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 
 class LoginActivity: AppCompatActivity()
 {
@@ -224,6 +228,88 @@ class LoginActivity: AppCompatActivity()
         loginActivityViewHolder.scrollLoginFields.visibility = View.GONE
         loginActivityViewHolder.scrollRegisterFields.visibility = View.GONE
         loginActivityViewHolder.scrollInitialLayout.visibility = View.VISIBLE
+    }
+
+    /**
+     * Função responsável por registrar um novo usuário no sistema utilizando o Firebase Authentication.
+     *
+     * **Objetivo**: Realizar o cadastro do usuário utilizando o email e senha fornecidos, verificando se a confirmação da senha corresponde à senha inicial.
+     * Caso o cadastro seja bem-sucedido, uma mensagem de boas-vindas é exibida. Se ocorrer algum erro, uma mensagem de erro personalizada é apresentada.
+     * Após o processo, os campos de registro são limpos e o layout retorna à tela inicial.
+     *
+     * **Entradas**:
+     * - `emailRegistrar`: String - O endereço de email fornecido pelo usuário.
+     * - `passwordRegistrar`: String - A senha fornecida pelo usuário.
+     * - `passwordConfirmRegistrar`: String - A confirmação da senha fornecida pelo usuário.
+     *
+     * **Saídas**:
+     * - Não há retorno direto, mas exibe mensagens via `Toast` para indicar o resultado da operação.
+     *
+     * **Caso de uso**: Esta função é chamada durante o processo de registro, quando o usuário tenta se cadastrar com um novo email e senha.
+     * Ela valida se a senha e a confirmação da senha são iguais, realiza o cadastro no Firebase e exibe o feedback adequado para o usuário.
+     *
+     * **Exemplo de uso**:
+     * - Entrada válida:
+     *   - `emailRegistrar`: "usuario@gmail.com"
+     *   - `passwordRegistrar`: "senha123"
+     *   - `passwordConfirmRegistrar`: "senha123"
+     *   - Resultado: "Registro bem-sucedido! Bem-vindo, usuario@gmail.com"
+     *
+     * - Entrada inválida (email já cadastrado):
+     *   - `emailRegistrar`: "usuario@gmail.com"
+     *   - `passwordRegistrar`: "senha123"
+     *   - `passwordConfirmRegistrar`: "senha123"
+     *   - Resultado: "Erro ao registrar: Esse email já está cadastrado."
+     *
+     * - Entrada inválida (senha fraca):
+     *   - `emailRegistrar`: "usuario@gmail.com"
+     *   - `passwordRegistrar`: "123"
+     *   - `passwordConfirmRegistrar`: "123"
+     *   - Resultado: "Erro ao registrar: A senha é muito fraca."
+     *
+     * - Entrada inválida (Confirmar senha diferente da Senha):
+     *   - `emailRegistrar`: "usuario@gmail.com"
+     *   - `passwordRegistrar`: "senha123"
+     *   - `passwordConfirmRegistrar`: "senha1234"
+     *   - Resultado: "Erro ao registrar: A senha digitada está diferente do confirmar senha."
+     */
+    private fun registerUser(emailRegistrar: String, passwordRegistrar: String, passwordConfirmRegistrar: String) {
+        if(passwordRegistrar == passwordConfirmRegistrar) {
+            auth.createUserWithEmailAndPassword(emailRegistrar, passwordRegistrar)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val user = auth.currentUser
+
+                        // Exibe mensagem de sucesso
+                        Toast.makeText(
+                            this,
+                            "Registro bem-sucedido! Bem-vindo, ${user?.email}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        // Exibe mensagem de erro personalizada
+                        val errorMessage = when (task.exception) {
+                            is FirebaseAuthWeakPasswordException -> "A senha é muito fraca."
+                            is FirebaseAuthInvalidCredentialsException -> "O email é inválido."
+                            is FirebaseAuthUserCollisionException -> "Esse email já está cadastrado."
+                            else -> "Erro desconhecido. Tente novamente."
+                        }
+
+                        Toast.makeText(this, "Erro ao registrar: $errorMessage", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+            // Redefine os campos e retorna para o layout inicial
+            loginActivityViewHolder.etRegisterMail.setText("")
+            loginActivityViewHolder.etRegisterPassword.setText("")
+            loginActivityViewHolder.etRegisterPasswordConfirm.setText("")
+
+            // Exibe o layout inicial
+            showInitialScreen()
+        } else {
+            // Exibe mensagem de erro caso as senhas não correspondam
+            Toast.makeText(this, "Erro ao registrar: A senha digitada está diferente do confirmar senha.", Toast.LENGTH_SHORT).show()
+        }
     }
 
 }
