@@ -312,4 +312,67 @@ class LoginActivity: AppCompatActivity()
         }
     }
 
+    /**
+     * Autentica o usuário utilizando Firebase Authentication com base no email e senha fornecidos.
+     *
+     * Objetivo: Verificar as credenciais fornecidas pelo usuário e realizar o login. Em caso de sucesso,
+     * exibe uma mensagem de boas-vindas com o email do usuário e navega para a tela principal. Em caso de falha,
+     * exibe uma mensagem de erro com detalhes sobre o problema.
+     *
+     * Entradas:
+     * - `emailLogin`: String - O email inserido pelo usuário. Qualquer espaço em branco será removido com `trim()`.
+     * - `passwordLogin`: String - A senha inserida pelo usuário. Qualquer espaço em branco será removido com `trim()`.
+     *
+     * Saídas:
+     * - Não há retorno explícito, mas a função apresenta mensagens ao usuário via `Toast` para indicar o
+     * sucesso ou falha da operação. Além disso, em caso de sucesso, redireciona o usuário para a tela principal.
+     *
+     * Caso de uso: A função é chamada quando o usuário pressiona o botão de login na interface.
+     * Ela utiliza os valores inseridos para autenticar o usuário no Firebase.
+     *
+     * Fluxo de execução:
+     * 1. Os parâmetros `emailLogin` e `passwordLogin` são ajustados usando `trim()` para remover espaços indesejados.
+     * 2. O Firebase Authentication tenta autenticar o usuário com as credenciais fornecidas.
+     * 3. Se a autenticação for bem-sucedida:
+     *    - Exibe uma mensagem de boas-vindas com o email do usuário.
+     *    - Navega para a tela principal usando `navigateToMainActivity()`.
+     * 4. Se a autenticação falhar:
+     *    - Exibe uma mensagem de erro detalhando o motivo da falha.
+     *
+     * Exemplo de uso:
+     * - Entrada válida:
+     *   - emailLogin: "usuario@exemplo.com "
+     *   - passwordLogin: " senha123"
+     *   (com `trim()` aplicado: emailLogin: "usuario@exemplo.com", passwordLogin: "senha123")
+     *   Resultado: "Login bem-sucedido! Bem-vindo, usuario@exemplo.com"
+     * - Entrada inválida:
+     *   - emailLogin: "usuario@exemplo.com"
+     *   - passwordLogin: "senhaerrada"
+     *   Resultado: "Erro ao fazer login: [mensagem de erro do Firebase]"
+     */
+    private fun loginUser(emailLogin: String, passwordLogin: String) {
+        // Removendo espaços desnecessários das entradas
+        val trimmedEmail = emailLogin.trim()
+        val trimmedPassword = passwordLogin.trim()
+
+        auth.signInWithEmailAndPassword(trimmedEmail, trimmedPassword)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val user = auth.currentUser
+                    Toast.makeText(
+                        this,
+                        "Login bem-sucedido! Bem-vindo, ${user?.email}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    navigateToMainActivity() // Navega para a tela principal após o login bem-sucedido
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Erro ao fazer login: ${task.exception?.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+    }
+
 }
