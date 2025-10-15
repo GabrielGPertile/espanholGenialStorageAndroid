@@ -41,14 +41,17 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.firebase.database.ktx)
-    implementation(libs.firebase.common.ktx)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation(platform("com.google.firebase:firebase-bom:32.2.3")) // Substitua pelo mais recente
-    implementation("com.google.firebase:firebase-storage")
-    implementation("com.google.firebase:firebase-database")
-    implementation("com.google.firebase:firebase-auth-ktx") // Firebase Auth com KTX
-    implementation("com.google.android.gms:play-services-auth:20.7.0") // Para Google Sign-In (opcional)
+
+    // Firebase (usando BOM)
+    implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-database-ktx")
+    implementation("com.google.firebase:firebase-storage-ktx")
+
+    // (Opcional) Login com Google
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
 }
