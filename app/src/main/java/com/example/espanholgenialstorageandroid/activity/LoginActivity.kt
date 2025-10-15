@@ -1,6 +1,7 @@
 package com.example.espanholgenialstorageandroid.activity
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.espanholgenialstorageandroid.R
 import com.example.espanholgenialstorageandroid.viewHolder.ImageViewHolder
@@ -68,5 +69,31 @@ class LoginActivity: AppCompatActivity()
         loginActivityViewHolder.btnEsqueceuSenha.setOnClickListener {
             openForgotPasswordActivity()
         }
+    }
+
+    /**
+     * Função responsável por exibir o layout de login e ocultar os outros
+     * layouts da tela de forma dinâmica.
+     *
+     * Objetivo: Tornar visível o layout de login, enquanto oculta o
+     * layout inicial e o de registro.
+     * Isso permite que o usuário veja a tela de login quando
+     * clicar no botão de login na tela inicial,
+     * ao mesmo tempo em que mantém os outros layouts ocultos até que sejam necessários.
+     *
+     * Entradas: Não há parâmetros de entrada.
+     *
+     * Saídas: Não há retorno de valor.
+     *
+     * Caso de uso: Esta função é acionada quando o usuário interage com o
+     * botão de login na tela inicial.
+     * Ao ser chamada, ela faz com que o layout de login se
+     * torne visível (`View.VISIBLE`), enquanto oculta
+     * os layouts de registro e inicial, ajustando a interface de acordo com a ação do usuário.
+     */
+    private fun showLoginScreen() {
+        loginActivityViewHolder.scrollLoginFields.visibility = View.VISIBLE
+        loginActivityViewHolder.scrollRegisterFields.visibility = View.GONE
+        loginActivityViewHolder.scrollInitialLayout.visibility = View.GONE
     }
 }
