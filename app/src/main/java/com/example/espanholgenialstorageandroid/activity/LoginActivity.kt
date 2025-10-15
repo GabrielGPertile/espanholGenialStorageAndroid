@@ -375,4 +375,48 @@ class LoginActivity: AppCompatActivity()
             }
     }
 
+    /**
+     * Função responsável por validar as entradas de email e senha no processo de login.
+     *
+     * Objetivo: Verificar se o email fornecido está em um formato válido e se a senha atende aos critérios mínimos.
+     * Caso as validações falhem, uma mensagem de erro será exibida ao usuário.
+     *
+     * Entradas:
+     * - `email`: String - O endereço de email fornecido pelo usuário.
+     * - `password`: String - A senha fornecida pelo usuário.
+     *
+     * Saídas:
+     * - Boolean: Retorna `true` se os dados forem válidos, ou `false` caso contrário.
+     *
+     * Caso de uso: Esta função é chamada durante o processo de login, quando o usuário tenta se autenticar.
+     * Ela valida os dados fornecidos antes de prosseguir com o login.
+     *
+     * Exemplo de uso:
+     * - Entrada válida:
+     *   email: "usuario@gmail.com"
+     *   password: "senha123"
+     *   Retorno: `true`
+     * - Entrada inválida (email incorreto):
+     *   email: "usuario@gmail"
+     *   password: "senha123"
+     *   Retorno: `false` (com mensagem: "Insira um email válido.")
+     * - Entrada inválida (senha muito curta):
+     *   email: "usuario@gmail.com"
+     *   password: "123"
+     *   Retorno: `false` (com mensagem: "A senha deve ter pelo menos 6 caracteres.")
+     */
+    private fun validateLoginInput(email: String, password: String): Boolean {
+        if (email.isBlank() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(this, "Insira um email válido.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (password.isBlank() || password.length < 6) {
+            Toast.makeText(this, "A senha deve ter pelo menos 6 caracteres.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        return true
+    }
+
 }
