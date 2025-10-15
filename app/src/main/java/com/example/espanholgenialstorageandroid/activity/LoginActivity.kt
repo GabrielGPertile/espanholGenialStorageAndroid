@@ -1,5 +1,6 @@
 package com.example.espanholgenialstorageandroid.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -472,6 +473,40 @@ class LoginActivity: AppCompatActivity()
         }
 
         return true
+    }
+
+    /**
+     * Navega para a tela principal do aplicativo (MainActivity).
+     *
+     * Objetivo: Iniciar a `MainActivity` e redirecionar o usuário para a tela principal do aplicativo.
+     * Essa função é chamada geralmente após o sucesso de uma ação, como login ou registro.
+     *
+     * Entradas:
+     * - Não há parâmetros de entrada.
+     *
+     * Saídas:
+     * - Não há valor de retorno. A função inicia a `MainActivity` usando uma `Intent`.
+     *
+     * Caso de uso:
+     * - A função é acionada quando o usuário conclui uma ação importante, como autenticação bem-sucedida ou
+     *   conclusão de cadastro. Ela redireciona o fluxo da aplicação para a tela principal.
+     *
+     * Exemplo de uso:
+     * - Após um login bem-sucedido:
+     *   `kotlin
+     *   if (task.isSuccessful) {
+     *       navigateToMainActivity()
+     *   }
+     *   ```
+     *
+     * - Após o registro de um novo usuário:
+     *   ```kotlin
+     *   navigateToMainActivity()
+     *   ```
+     */
+    private fun navigateToMainActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
     }
 
 }
