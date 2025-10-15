@@ -419,4 +419,59 @@ class LoginActivity: AppCompatActivity()
         return true
     }
 
+    /**
+     * Valida as entradas de email, senha e confirmação de senha no processo de cadastro.
+     *
+     * **Objetivo**: Garantir que o email esteja em um formato válido e que a senha e a confirmação de senha atendam aos critérios mínimos.
+     * Se qualquer validação falhar, uma mensagem de erro será exibida ao usuário.
+     *
+     * **Entradas**:
+     * - `email`: String - O endereço de email fornecido pelo usuário. Deve estar em um formato válido.
+     * - `password`: String - A senha fornecida pelo usuário. Deve ter pelo menos 6 caracteres.
+     * - `confirmPassword`: String - A confirmação da senha fornecida pelo usuário. Deve corresponder aos critérios da senha.
+     *
+     * **Saídas**:
+     * - `Boolean`: Retorna `true` se todos os dados forem válidos; caso contrário, retorna `false` e exibe uma mensagem de erro apropriada.
+     *
+     * **Caso de uso**: Esta função é acionada durante o processo de cadastro, quando o usuário tenta se registrar.
+     * Antes de enviar os dados ao servidor, a função verifica se as entradas atendem aos critérios necessários.
+     *
+     * **Exemplo de uso**:
+     * - Entrada válida:
+     *   - email: "usuario@gmail.com"
+     *   - password: "senha123"
+     *   - confirmPassword: "senha123"
+     *   - Retorno: `true`
+     *
+     * - Entrada inválida (email incorreto):
+     *   - email: "usuario@gmail"
+     *   - password: "senha123"
+     *   - confirmPassword: "senha123"
+     *   - Retorno: `false` (com mensagem: "Insira um email válido.")
+     *
+     * - Entrada inválida (senha muito curta):
+     *   - email: "usuario@gmail.com"
+     *   - password: "123"
+     *   - confirmPassword: "123"
+     *   - Retorno: `false` (com mensagem: "A senha deve ter pelo menos 6 caracteres.")
+     */
+    private fun validateRegisterInput(email: String, password: String, confirmPassword: String): Boolean {
+        if (email.isBlank() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(this, "Insira um email válido.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (password.isBlank() || password.length < 6) {
+            Toast.makeText(this, "A senha deve ter pelo menos 6 caracteres.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (confirmPassword.isBlank() || confirmPassword.length < 6) {
+            Toast.makeText(this, "A senha deve ter pelo menos 6 caracteres.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        return true
+    }
+
 }
