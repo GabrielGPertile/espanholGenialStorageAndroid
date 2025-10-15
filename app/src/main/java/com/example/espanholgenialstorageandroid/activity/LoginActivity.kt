@@ -129,4 +129,35 @@ class LoginActivity: AppCompatActivity()
         loginActivityViewHolder.scrollRegisterFields.visibility = View.GONE
         loginActivityViewHolder.scrollInitialLayout.visibility = View.VISIBLE
     }
+
+    /**
+     * Função responsável por exibir o layout inicial e ocultar os outros layouts da tela de forma dinâmica.
+     *
+     * Objetivo: Tornar o layout inicial visível, enquanto oculta os layouts de login e registro.
+     * Isso permite que o usuário retorne à tela inicial, ocultando os outros layouts até que sejam necessários.
+     * A função é útil para alternar entre as diferentes telas de login, registro e a tela inicial.
+     *
+     * Entradas: Não há parâmetros de entrada.
+     *
+     * Saídas: Não há retorno de valor.
+     *
+     * Caso de uso: Esta função é acionada quando o usuário interage com um botão de "Voltar" ou qualquer ação que precise retornar à tela inicial.
+     * Ao ser chamada, ela torna o layout inicial visível (`View.VISIBLE`), enquanto oculta os layouts de login e registro.
+     *
+     * Exemplo de uso:
+     * - Antes da função ser chamada:
+     *   - `scrollLoginFields`: Visível
+     *   - `scrollRegisterFields`: Visível
+     *   - `scrollInitialLayout`: Oculto
+     *
+     * - Após a função ser chamada:
+     *   - `scrollLoginFields`: Oculto
+     *   - `scrollRegisterFields`: Oculto
+     *   - `scrollInitialLayout`: Visível
+     */
+    private fun showInitialScreen() {
+        loginActivityViewHolder.scrollLoginFields.visibility = View.GONE
+        loginActivityViewHolder.scrollRegisterFields.visibility = View.GONE
+        loginActivityViewHolder.scrollInitialLayout.visibility = View.VISIBLE
+    }
 }
