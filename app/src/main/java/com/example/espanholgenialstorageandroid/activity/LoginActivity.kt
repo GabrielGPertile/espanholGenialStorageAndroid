@@ -188,4 +188,42 @@ class LoginActivity: AppCompatActivity()
         loginActivityViewHolder.scrollInitialLayout.visibility = View.GONE
     }
 
+    /**
+     * Função responsável por cancelar o processo de cadastro, limpando os campos do cadastro e
+     * retornando à tela inicial.
+     *
+     * Objetivo: Limpar os campos `etRegisterMail`, `etRegisterPassword` `etRegisterConfirmPassword`,
+     * ocultar o layout de cadastro
+     * e exibir a tela inicial. Isso é feito quando o usuário clica no botão de cancelar login.
+     *
+     * Entradas: Não há parâmetros de entrada.
+     *
+     * Saídas: Não há retorno de valor.
+     *
+     * Caso de uso: Esta função é acionada quando o usuário interage com o botão de "Cancelar Cadastro"
+     * no layout de login. Ela limpa os campos de email, senha e confirmar senhar
+     * e alterna a visibilidade dos layouts,
+     * ocultando o layout de cadastro e mostrando o layout inicial.
+     *
+     * Exemplo de uso:
+     * - Antes da função ser chamada:
+     *   etRegisterMail: "testeCasoUso@gmail.com"
+     *   etRegisterPassword: "*****" (senha oculta por segurança)
+     *   etRegisterConfirmPassword: "*****" (senha oculta por segurança)
+     * - Depois da função ser chamada:
+     *   etRegisterMail: ""
+     *   etRegisterPassword: "" (senha oculta por segurança)
+     *   etRegisterConfirmPassword: "" (senha oculta por segurança)
+     */
+    private fun cancelRegistrer()
+    {
+        loginActivityViewHolder.etRegisterMail.setText("")
+        loginActivityViewHolder.etRegisterPassword.setText("")
+        loginActivityViewHolder.etRegisterPasswordConfirm.setText("")
+
+        loginActivityViewHolder.scrollLoginFields.visibility = View.GONE
+        loginActivityViewHolder.scrollRegisterFields.visibility = View.GONE
+        loginActivityViewHolder.scrollInitialLayout.visibility = View.VISIBLE
+    }
+
 }
