@@ -160,4 +160,32 @@ class LoginActivity: AppCompatActivity()
         loginActivityViewHolder.scrollRegisterFields.visibility = View.GONE
         loginActivityViewHolder.scrollInitialLayout.visibility = View.VISIBLE
     }
+
+    /**
+     * Função responsável por exibir o layout de cadastro e ocultar os outros
+     * layouts da tela de forma dinâmica.
+     *
+     * Objetivo: Tornar visível o layout de cadastro, enquanto oculta o
+     * layout inicial e o de login.
+     * Isso permite que o usuário veja a tela de cadastro quando
+     * clicar no botão de login na tela inicial,
+     * ao mesmo tempo em que mantém os outros layouts ocultos até que sejam necessários.
+     *
+     * Entradas: Não há parâmetros de entrada.
+     *
+     * Saídas: Não há retorno de valor.
+     *
+     * Caso de uso: Esta função é acionada quando o usuário interage com o
+     * botão de cadastrar na tela inicial.
+     * Ao ser chamada, ela faz com que o layout de cadastrar se
+     * torne visível (`View.VISIBLE`), enquanto oculta
+     * os layouts de lagoin e inicial, ajustando a interface de acordo com a ação do usuário.
+     */
+    private fun showRegisterScreen()
+    {
+        loginActivityViewHolder.scrollLoginFields.visibility = View.GONE
+        loginActivityViewHolder.scrollRegisterFields.visibility = View.VISIBLE
+        loginActivityViewHolder.scrollInitialLayout.visibility = View.GONE
+    }
+
 }
