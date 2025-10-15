@@ -21,7 +21,7 @@ class LoadingActivity : AppCompatActivity()
 
         // Definir um atraso de 3 segundos (3000 milissegundos)
         Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this, loginActivity::class.java)
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
 
             // Fechar a LoadingActivity para que o usuário não consiga voltar para ela
