@@ -136,6 +136,30 @@ class LoginActivity: AppCompatActivity()
     }
 
     /**
+     * Função responsável por redirecionar o usuário para a activity de redefinição de senha.
+     *
+     *  Esta função:
+     *  Esta função inicia a Activity `ForgetPasswordReset`, permitindo
+     *  que o usuário informe seu e-mail para recuperar a senha.
+     *
+     * Objetivo:
+     * Abrir a tela de redefinição de senha para que o usuário
+     * possa informar seu e-mail e recuperar a senha.
+     *
+     * Entradas: Não há parâmetros de entrada.
+     *
+     * Saídas: Não há retorno de valor.
+     *
+     * Caso de uso: Chamado ao clicar no botão "Esqueci minha senha" na tela de login.
+     *
+     */
+    private fun openForgotPasswordActivity()
+    {
+        val intent = Intent(this, ForgetPasswordReset::class.java)
+        startActivity(intent)
+    }
+
+    /**
      * Função responsável por exibir o layout inicial e ocultar os outros layouts da tela de forma dinâmica.
      *
      * Objetivo: Tornar o layout inicial visível, enquanto oculta os layouts de login e registro.
