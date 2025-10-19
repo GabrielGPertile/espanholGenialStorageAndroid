@@ -389,7 +389,7 @@ class LoginActivity: AppCompatActivity()
                         "Login bem-sucedido! Bem-vindo, ${user?.email}",
                         Toast.LENGTH_SHORT
                     ).show()
-                    navigateToMainActivity() // Navega para a tela principal após o login bem-sucedido
+                    navigateToDashboardActivity() // Navega para a tela principal após o login bem-sucedido
                 } else {
                     Toast.makeText(
                         this,
@@ -528,8 +528,8 @@ class LoginActivity: AppCompatActivity()
      *   navigateToMainActivity()
      *   ```
      */
-    private fun navigateToMainActivity() {
-        val intent = Intent(this, MainActivity::class.java)
+    private fun navigateToDashboardActivity() {
+        val intent = Intent(this, DashboardActivity::class.java)
         startActivity(intent)
     }
 
