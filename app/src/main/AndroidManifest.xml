@@ -33,6 +33,16 @@
             </intent-filter>
         </activity>
 
+        <!-- Configuração do ForgetPasswordReset -->
+        <activity
+            android:name=".activity.ForgetPasswordReset"
+            android:exported="true">
+
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>
