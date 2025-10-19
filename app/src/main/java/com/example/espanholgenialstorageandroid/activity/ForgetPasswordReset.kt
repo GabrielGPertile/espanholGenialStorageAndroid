@@ -1,6 +1,7 @@
 package com.example.espanholgenialstorageandroid.activity
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.espanholgenialstorageandroid.R
 import com.example.espanholgenialstorageandroid.viewHolder.ForgetPasswordResetViewHolder
@@ -28,5 +29,14 @@ class ForgetPasswordReset: AppCompatActivity()
         //Inicializa o Auth do Firebase
         FirebaseApp.initializeApp(this)
         auth = FirebaseAuth.getInstance()
+
+        // Configuração dos Botões
+        forgetPasswordResetViewHolder.btnEnviar.setOnClickListener {
+            sendPasswordResetEmail()
+        }
+
+        forgetPasswordResetViewHolder.btnVoltar.setOnClickListener {
+            navigateBackToLogin()
+        }
     }
 }
