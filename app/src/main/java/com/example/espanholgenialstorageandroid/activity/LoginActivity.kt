@@ -360,7 +360,7 @@ class LoginActivity: AppCompatActivity()
      * 2. O Firebase Authentication tenta autenticar o usuário com as credenciais fornecidas.
      * 3. Se a autenticação for bem-sucedida:
      *    - Exibe uma mensagem de boas-vindas com o email do usuário.
-     *    - Navega para a tela principal usando `navigateToMainActivity()`.
+     *    - Navega para a tela principal usando `navigateToDashboardActivity()`.
      * 4. Se a autenticação falhar:
      *    - Exibe uma mensagem de erro detalhando o motivo da falha.
      *
@@ -500,16 +500,16 @@ class LoginActivity: AppCompatActivity()
     }
 
     /**
-     * Navega para a tela principal do aplicativo (MainActivity).
+     * Navega para a tela principal do aplicativo (DashboardActivity).
      *
-     * Objetivo: Iniciar a `MainActivity` e redirecionar o usuário para a tela principal do aplicativo.
+     * Objetivo: Iniciar a `DashboardActivity` e redirecionar o usuário para a tela principal do aplicativo.
      * Essa função é chamada geralmente após o sucesso de uma ação, como login ou registro.
      *
      * Entradas:
      * - Não há parâmetros de entrada.
      *
      * Saídas:
-     * - Não há valor de retorno. A função inicia a `MainActivity` usando uma `Intent`.
+     * - Não há valor de retorno. A função inicia a `DashboardActivity` usando uma `Intent`.
      *
      * Caso de uso:
      * - A função é acionada quando o usuário conclui uma ação importante, como autenticação bem-sucedida ou
@@ -519,13 +519,13 @@ class LoginActivity: AppCompatActivity()
      * - Após um login bem-sucedido:
      *   `kotlin
      *   if (task.isSuccessful) {
-     *       navigateToMainActivity()
+     *       navigateToDashboardActivity()
      *   }
      *   ```
      *
      * - Após o registro de um novo usuário:
      *   ```kotlin
-     *   navigateToMainActivity()
+     *   navigateToDashboardActivity()
      *   ```
      */
     private fun navigateToDashboardActivity() {
