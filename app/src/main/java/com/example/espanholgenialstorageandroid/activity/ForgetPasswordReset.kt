@@ -92,4 +92,29 @@ class ForgetPasswordReset: AppCompatActivity()
             }
     }
 
+    /**
+     * Função responsável por fechar a Activity atual e retornar à LoginActivity.
+     *
+     * Objetivo: Encerrar a tela atual do aplicativo, permitindo que o usuário volte para a tela de login
+     * ou outra Activity que estava aberta anteriormente na pilha de Activities.
+     *
+     * Entradas:
+     * - Nenhuma.
+     *
+     * Saídas:
+     * - Não retorna valores. Apenas fecha a Activity atual.
+     *
+     * Caso de uso: Esta função é chamada quando o usuário deseja voltar à tela anterior, geralmente a tela de login,
+     * sem realizar nenhuma ação adicional.
+     *
+     * Exemplo de uso:
+     * - Usuário clica no botão "Voltar" ou "Cancelar" na tela de redefinição de senha.
+     *   Retorno: A Activity de redefinição de senha é encerrada e a tela de login é exibida.
+     */
+
+    private fun navigateBackToLogin()
+    {
+        finish()
+    }
+
 }
