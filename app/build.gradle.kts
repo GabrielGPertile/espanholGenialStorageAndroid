@@ -54,4 +54,7 @@ dependencies {
 
     // (Opcional) Login com Google
     implementation("com.google.android.gms:play-services-auth:21.2.0")
+
+    implementation("com.google.android.material:material:1.11.0") // versão recente
+    implementation("androidx.drawerlayout:drawerlayout:1.1.1")
 }
