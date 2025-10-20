@@ -52,4 +52,15 @@ class DashboardActivity: AppCompatActivity()
             Toast.makeText(this, "Abrir Inserir Áudio", Toast.LENGTH_SHORT).show()
         }
     }
+
+    private fun deslogFirebase()
+    {
+        // desloga do Firebase
+        FirebaseAuth.getInstance().signOut()
+        Toast.makeText(this, "Deslogado com sucesso!", Toast.LENGTH_SHORT).show()
+
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+    }
 }
