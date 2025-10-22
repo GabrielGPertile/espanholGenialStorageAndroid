@@ -53,6 +53,17 @@
             </intent-filter>
         </activity>
 
+        <!-- Configuração do UserActivity -->
+        <activity
+            android:name=".activity.UserActivity"
+            android:exported="true">
+
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+
     </application>
 
 </manifest>
