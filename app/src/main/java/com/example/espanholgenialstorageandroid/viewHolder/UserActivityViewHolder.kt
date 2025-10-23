@@ -1,6 +1,7 @@
 package com.example.espanholgenialstorageandroid.viewHolder
 
 import android.app.Activity
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
@@ -18,8 +19,7 @@ class UserActivityViewHolder(activity: Activity)
     val tvEmailDado: TextView = activity.findViewById(R.id.tvEmailDado)
     val tvIdade: TextView = activity.findViewById(R.id.tvIdade)
     val tvIdadeDado: TextView = activity.findViewById(R.id.tvIdadeDado)
-    val tvTipoUsuario: TextView = activity.findViewById(R.id.tvTipoUsuario)
-    val tvTipoUsuarioDado: TextView = activity.findViewById(R.id.tvTipoUsuarioDado)
+    val btnEditar: Button = activity.findViewById(R.id.btnEditar)
 
     // Elementos do menu lateral
     var toolbar: Toolbar =  activity.findViewById(R.id.toolbar)
