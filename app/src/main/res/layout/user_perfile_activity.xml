@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Conteúdo principal -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Barra superior com ícone de hambúrguer -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#104e8b"
+            android:title="Meu App"
+            android:titleTextColor="@android:color/white"/>
+
+        <!-- Área rolável -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/content_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <!-- Imagem 1 -->
+                <ImageView
+                    android:id="@+id/ivPerfilUsuario"
+                    android:layout_width="match_parent"
+                    android:layout_height="125dp"
+                    android:src="@drawable/perfil_usuario"
+                    android:contentDescription="Logo Inserir Áudio"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvNomeCompleto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/ivPerfilUsuario"
+                    android:text="Nome completo:"
+                    android:layout_marginTop="16dp"/>
+
+                <TextView
+                    android:id="@+id/tvNomeCompletoDado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/tvNomeCompleto"
+                    android:text="Nome completo dado firebase"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/tvNomeCompletoDado"
+                    android:text="Email:"
+                    android:layout_marginTop="24dp"/>
+
+                <TextView
+                    android:id="@+id/tvEmailDado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/tvEmail"
+                    android:text="Email:"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvIdade"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/tvEmailDado"
+                    android:text="Idade:"
+                    android:layout_marginTop="24dp"/>
+
+                <TextView
+                    android:id="@+id/tvIdadeDado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/tvIdade"
+                    android:text="Nome completo dado firebase"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvTipoUsuario"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/tvIdadeDado"
+                    android:text="Tipo de usuário:"
+                    android:layout_marginTop="24dp"/>
+
+                <TextView
+                    android:id="@+id/tvTipoUsuarioDado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/tvTipoUsuario"
+                    android:text="Tipo de usuário dado firebase"
+                    android:layout_marginTop="8dp"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <!-- Conteúdo principal -->
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- MENU LATERAL (VERTICAL À ESQUERDA) -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#104e8b"
+        android:paddingStart="4dp"
+        android:paddingLeft="4dp"
+        app:itemVerticalPadding="12dp"
+        app:itemHorizontalPadding="8dp"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/drawer_menu"
+        app:itemIconTint="@android:color/white"
+        app:itemTextColor="@android:color/black"
+        app:itemBackground="@drawable/item_quadrado"
+        app:itemTextAppearance="@style/NavDrawerText"/>
+
+</androidx.drawerlayout.widget.DrawerLayout>
