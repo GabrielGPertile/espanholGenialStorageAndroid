@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Conteúdo principal -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Barra superior com ícone de hambúrguer -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#104e8b"
+            android:title="Meu App"
+            android:titleTextColor="@android:color/white"/>
+
+        <!-- Área rolável -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/content_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <!-- Imagem 1 -->
+                <ImageView
+                    android:id="@+id/ivPerfilUsuario"
+                    android:layout_width="match_parent"
+                    android:layout_height="125dp"
+                    android:src="@drawable/perfil_usuario"
+                    android:contentDescription="Logo Inserir Áudio"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvNomeCompleto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/ivPerfilUsuario"
+                    android:text="Nome completo:"
+                    android:layout_marginTop="16dp"/>
+
+                <EditText
+                    android:id="@+id/etNomeCompletoDado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/tvNomeCompleto"
+                    android:hint="Insira seu nome"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/etNomeCompletoDado"
+                    android:text="Email:"
+                    android:layout_marginTop="24dp"/>
+
+                <EditText
+                    android:id="@+id/etEmailDado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/tvEmail"
+                    android:hint="Insira seu email"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvIdade"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/etEmailDado"
+                    android:text="Idade:"
+                    android:layout_marginTop="24dp"/>
+
+                <EditText
+                    android:id="@+id/etIdadeDado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/tvIdade"
+                    android:hint="Insira a sua idade"
+                    android:layout_marginTop="8dp"/>
+
+                <Button
+                    android:id="@+id/btnSalvar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Editar"
+                    android:layout_marginTop="24dp"
+                    app:layout_constraintTop_toBottomOf="@id/etIdadeDado"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+                <Button
+                    android:id="@+id/btnCanelar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Editar"
+                    android:layout_marginTop="24dp"
+                    app:layout_constraintTop_toBottomOf="@id/btnSalvar"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+                <androidx.constraintlayout.helper.widget.Flow
+                    android:id="@+id/flow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="btnSalvar, btnCanelar"
+                    app:flow_wrapMode="chain"
+                    app:flow_horizontalGap="8dp"
+                    app:flow_verticalGap="8dp"
+                    app:flow_maxElementsWrap="2"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <!-- Conteúdo principal -->
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- MENU LATERAL (VERTICAL À ESQUERDA) -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#104e8b"
+        android:paddingStart="4dp"
+        android:paddingLeft="4dp"
+        app:itemVerticalPadding="12dp"
+        app:itemHorizontalPadding="8dp"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/drawer_menu"
+        app:itemIconTint="@android:color/white"
+        app:itemTextColor="@android:color/black"
+        app:itemBackground="@drawable/item_quadrado"
+        app:itemTextAppearance="@style/NavDrawerText"/>
+
+</androidx.drawerlayout.widget.DrawerLayout>
