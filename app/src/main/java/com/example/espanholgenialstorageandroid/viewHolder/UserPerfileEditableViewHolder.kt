@@ -21,7 +21,7 @@ class UserPerfileEditableViewHolder(activity: Activity)
     val tvIdade: TextView = activity.findViewById(R.id.tvIdade)
     val etIdadeDado: EditText = activity.findViewById(R.id.etIdadeDado)
     val btnSalvar: Button = activity.findViewById(R.id.btnSalvar)
-    val btnCanelar: Button = activity.findViewById(R.id.btnCanelar)
+    val btnCanelar: Button = activity.findViewById(R.id.btnCancelar)
 
     // Elementos do menu lateral
     var toolbar: Toolbar =  activity.findViewById(R.id.toolbar)
