@@ -1,6 +1,10 @@
 package com.example.espanholgenialstorageandroid.activity
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
@@ -51,7 +55,13 @@ class UserPerfileEditableActivity: BaseDrawerActivity()
                 if(uri != null)
                 {
                     selectedImageUri = uri
-                    userPerfileEditableViewHolder.ivPerfilUsuario.setImageURI(uri)
+
+                    val bitmap = getCorrectlyOrientedBitmap(uri)
+
+                    if (bitmap != null) {
+                        userPerfileEditableViewHolder.ivPerfilUsuario.setImageBitmap(bitmap)
+                    }
+
                     savedEditablePhoto(uri)
                 }
             }
@@ -65,6 +75,32 @@ class UserPerfileEditableActivity: BaseDrawerActivity()
 
             pickImageLauncher.launch(intent)
         }
+    }
+
+    private fun getCorrectlyOrientedBitmap(uri: Uri): Bitmap?
+    {
+        val inputSteam = contentResolver.openInputStream(uri) ?: return null
+        val bitmap = BitmapFactory.decodeStream(inputSteam)
+        inputSteam.close()
+
+        val exitInputStream = contentResolver.openInputStream(uri)
+        val exif = ExifInterface(exitInputStream!!)
+        val orientation = exif.getAttributeInt(
+            ExifInterface.TAG_ORIENTATION,
+            ExifInterface.ORIENTATION_NORMAL
+        )
+        exitInputStream.close()
+
+        val matrix = Matrix()
+
+        when (orientation)
+        {
+            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+        }
+
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
 
     private fun savedEditablePhoto(uri: Uri)
