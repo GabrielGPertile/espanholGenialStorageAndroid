@@ -7,4 +7,9 @@
         <item name="android:paddingBottom">16dp</item>
     </style>
 
+    <style name="CircularImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item> <!-- 50% deixa circular -->
+    </style>
+
 </resources>

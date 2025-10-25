@@ -33,15 +33,17 @@
                 android:padding="16dp">
 
                 <!-- Imagem 1 -->
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/ivPerfilUsuario"
-                    android:layout_width="match_parent"
-                    android:layout_height="125dp"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
                     android:src="@drawable/perfil_usuario"
                     android:contentDescription="Logo Inserir Áudio"
+                    android:scaleType="centerCrop"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:shapeAppearanceOverlay="@style/CircularImageView"/>
 
                 <TextView
                     android:id="@+id/tvNomeCompleto"
