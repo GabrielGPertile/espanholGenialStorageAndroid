@@ -1,5 +1,6 @@
 package com.example.espanholgenialstorageandroid.activity
 
+import android.content.Intent
 import android.os.Bundle
 import com.example.espanholgenialstorageandroid.R
 import com.example.espanholgenialstorageandroid.viewHolder.UserActivityViewHolder
@@ -26,17 +27,15 @@ class UserActivity: BaseDrawerActivity()
 
         //configuração do botão
         userActivityViewHolder.btnEditar.setOnClickListener {
-            // Troca o layout para o de edição
-            setContentView(R.layout.user_perfile_editable_activity)
-
-            userPerfileEditableViewHolder = UserPerfileEditableViewHolder(this)
-
-            setupDrawer(
-                userPerfileEditableViewHolder.drawerLayout,
-                userPerfileEditableViewHolder.navView,
-                userPerfileEditableViewHolder.toolbar
-            )
+            navigateToUserPerfileEditableActivity()
         }
     }
+
+    private fun navigateToUserPerfileEditableActivity()
+    {
+        val intent = Intent(this, UserPerfileEditableActivity::class.java)
+        startActivity(intent)
+    }
+
 
 }
