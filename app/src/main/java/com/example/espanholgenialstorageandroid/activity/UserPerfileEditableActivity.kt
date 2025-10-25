@@ -3,6 +3,7 @@ package com.example.espanholgenialstorageandroid.activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.espanholgenialstorageandroid.R
@@ -64,5 +65,21 @@ class UserPerfileEditableActivity: BaseDrawerActivity()
 
             pickImageLauncher.launch(intent)
         }
+    }
+
+    private fun savedEditablePhoto(uri: Uri)
+    {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val storageRef = storage.reference
+
+        val perfilRef = storageRef.child("arquivos/$userId/perfil/fotodeperfil.jpg")
+
+        perfilRef.putFile(uri)
+            .addOnSuccessListener  {
+                Toast.makeText(this, "Foto de perfil atualizada!", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Falha ao enviar foto: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 }
