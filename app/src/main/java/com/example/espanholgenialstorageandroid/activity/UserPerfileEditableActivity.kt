@@ -89,6 +89,10 @@ class UserPerfileEditableActivity: BaseDrawerActivity()
         userPerfileEditableViewHolder.btnSalvar.setOnClickListener {
             savedUserData()
         }
+
+        userPerfileEditableViewHolder.btnCanelar.setOnClickListener {
+            cancelEditUser()
+        }
     }
 
     private fun getCorrectlyOrientedBitmap(uri: Uri): Bitmap?
@@ -243,5 +247,10 @@ class UserPerfileEditableActivity: BaseDrawerActivity()
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Erro ao salvar dados: ${e.message}", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun cancelEditUser()
+    {
+        finish()
     }
 }
