@@ -3,14 +3,16 @@ package com.example.espanholgenialstorageandroid.activity
 import android.content.Intent
 import android.os.Bundle
 import com.example.espanholgenialstorageandroid.R
+import com.example.espanholgenialstorageandroid.strategy.FirebaseStorageProfileImageStrategy
 import com.example.espanholgenialstorageandroid.viewHolder.UserActivityViewHolder
 import com.example.espanholgenialstorageandroid.viewHolder.UserPerfileEditableViewHolder
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.auth.FirebaseAuth
 
 
 class UserActivity: BaseDrawerActivity()
 {
     private lateinit var userActivityViewHolder: UserActivityViewHolder
-    private lateinit var userPerfileEditableViewHolder: UserPerfileEditableViewHolder
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -26,6 +28,7 @@ class UserActivity: BaseDrawerActivity()
         )
 
         loadProfilePhotoInDrawer()
+        loadProfilePhotoWithStrategy()
 
         //configuração do botão
         userActivityViewHolder.btnEditar.setOnClickListener {
@@ -39,5 +42,15 @@ class UserActivity: BaseDrawerActivity()
         startActivity(intent)
     }
 
+    private fun loadProfilePhotoWithStrategy() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val strategy = FirebaseStorageProfileImageStrategy(FirebaseStorage.getInstance())
+
+        strategy.loadProfileImage(
+            context = this,
+            imageView = userActivityViewHolder.ivPerfilUsuario,
+            userId = userId
+        )
+    }
 
 }

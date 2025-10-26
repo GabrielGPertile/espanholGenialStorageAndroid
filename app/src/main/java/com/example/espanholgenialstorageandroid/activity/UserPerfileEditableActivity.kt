@@ -13,6 +13,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.espanholgenialstorageandroid.R
 import com.example.espanholgenialstorageandroid.model.UserClass
+import com.example.espanholgenialstorageandroid.strategy.FirebaseStorageProfileImageStrategy
 import com.example.espanholgenialstorageandroid.viewHolder.UserPerfileEditableViewHolder
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
@@ -54,7 +55,7 @@ class UserPerfileEditableActivity: BaseDrawerActivity()
         userPerfileEditableViewHolder.etIdadeDado.clearFocus()
 
         loadProfilePhotoInDrawer()
-        loadProfilePhoto()
+        loadProfilePhotoWithStrategy()
 
         pickImageLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -121,23 +122,16 @@ class UserPerfileEditableActivity: BaseDrawerActivity()
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
 
-    private fun loadProfilePhoto()
-    {
+    private fun loadProfilePhotoWithStrategy() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val storageRef = storage.reference
-        val perfilRef = storageRef.child("arquivos/$userId/perfil/fotodeperfil.jpg")
+        val strategy = FirebaseStorageProfileImageStrategy(FirebaseStorage.getInstance())
 
-        perfilRef.downloadUrl.addOnSuccessListener { uri ->
-            Glide.with(this@UserPerfileEditableActivity)
-                .load(uri)
-                .circleCrop()
-                .placeholder(R.drawable.perfil_usuario)
-                .into(userPerfileEditableViewHolder.ivPerfilUsuario)
-        }.addOnFailureListener {
-            userPerfileEditableViewHolder.ivPerfilUsuario.setImageResource(R.drawable.perfil_usuario)
-        }
-    } // <- mantém só essa
-
+        strategy.loadProfileImage(
+            context = this,
+            imageView = userPerfileEditableViewHolder.ivPerfilUsuario,
+            userId = userId
+        )
+    }
 
     // Função para corrigir orientação do Bitmap
     private fun fixBitmapOrientation(bitmap: Bitmap, bytes: ByteArray): Bitmap
