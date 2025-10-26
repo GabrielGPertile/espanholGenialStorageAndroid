@@ -74,6 +74,15 @@
             </intent-filter>
         </activity>
 
+        <!-- Configuração do CreatePhotoStorageActivity -->
+        <activity
+            android:name=".activity.CreatePhotoStorageActivity"
+            android:exported="true">
+
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
 
     </application>
 
