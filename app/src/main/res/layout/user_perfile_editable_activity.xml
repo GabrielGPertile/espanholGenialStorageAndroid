@@ -66,6 +66,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@id/tvNomeCompleto"
                     android:hint="Insira seu nome"
+                    android:inputType="text"
                     android:focusableInTouchMode="true"
                     android:layout_marginTop="8dp"/>
 
@@ -83,6 +84,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@id/tvIdade"
                     android:hint="Insira a sua idade"
+                    android:inputType="number"
                     android:focusableInTouchMode="true"
                     android:layout_marginTop="8dp"/>
 
