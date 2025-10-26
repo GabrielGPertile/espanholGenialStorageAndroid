@@ -181,10 +181,27 @@ class UserPerfileEditableActivity: BaseDrawerActivity()
     private fun savedUserData() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
+        val nomeCompleto = userPerfileEditableViewHolder.etNomeCompletoDado.text.toString().trim()
+        val idade = userPerfileEditableViewHolder.etIdadeDado.text.toString().trim().toIntOrNull()
+
+        // Verifica se estão vazios
+        if (nomeCompleto.isEmpty()) {
+            userPerfileEditableViewHolder.etNomeCompletoDado.error = "Nome é obrigatório"
+            userPerfileEditableViewHolder.etNomeCompletoDado.requestFocus()
+            return
+        }
+
+        if (idade == null || idade !in 5..120) {
+            userPerfileEditableViewHolder.etIdadeDado.error = "Informe uma idade válida (5 a 120)"
+            userPerfileEditableViewHolder.etIdadeDado.requestFocus()
+            return
+        }
+
+
         // Atualiza os dados no objeto UserClass
         user.uid = userId
-        user.nomeCompleto = userPerfileEditableViewHolder.etNomeCompletoDado.text.toString()
-        user.idade = userPerfileEditableViewHolder.etIdadeDado.text.toString().toIntOrNull() ?: 0
+        user.nomeCompleto = nomeCompleto
+        user.idade = idade
         user.email = auth.currentUser?.email ?: ""
 
         // 🔹 Agora o upload da imagem é feito APENAS ao clicar em “Salvar”
