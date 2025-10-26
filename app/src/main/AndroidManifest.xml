@@ -66,6 +66,7 @@
         <!-- Configuração do UserPerfileEditableActivity -->
         <activity
             android:name=".activity.UserPerfileEditableActivity"
+            android:windowSoftInputMode="stateHidden"
             android:exported="true">
 
             <intent-filter>
