@@ -9,13 +9,21 @@
         app:iconPadding="0dp" />
 
     <item
-        android:id="@+id/menu_configuracoes"
-        android:title="Configurações"
-        app:iconPadding="0dp" />
+        android:id="@+id/menu_dashboard_principal"
+        android:title="Dashboard Principal" />
+    <item
+        android:id="@+id/menu_dashboard_meusAudios"
+        android:title="Meus audios" />
+    <item
+        android:id="@+id/menu_dashboard_meusVideos"
+        android:title="Meus vídeos" />
+    <item
+        android:id="@+id/menu_dashboard_minhasFotos"
+        android:title="Minhas fotos" />
 
     <item
-        android:id="@+id/menu_ajuda"
-        android:title="Ajuda"
+        android:id="@+id/menu_SobreNos"
+        android:title="Sobre nós"
         app:iconPadding="0dp" />
 
     <item

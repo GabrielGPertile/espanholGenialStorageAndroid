@@ -44,7 +44,11 @@ abstract class BaseDrawerActivity : AppCompatActivity()
                 R.id.menu_perfil -> {
                     navigateToUserActivity()
                 }
-                R.id.menu_configuracoes -> { /* abrir configurações */ }
+                R.id.menu_dashboard_principal -> { /* abrir configurações */ }
+                R.id.menu_dashboard_meusAudios -> {}
+                R.id.menu_dashboard_meusVideos -> {}
+                R.id.menu_dashboard_minhasFotos -> {}
+                R.id.menu_SobreNos -> {}
                 R.id.menu_sair -> {
                     deslogFirebase()
                 }
