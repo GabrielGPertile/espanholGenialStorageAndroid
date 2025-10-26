@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.espanholgenialstorageandroid.R
+import com.example.espanholgenialstorageandroid.model.UserClass
 import com.example.espanholgenialstorageandroid.viewHolder.UserPerfileEditableViewHolder
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
@@ -24,6 +25,7 @@ class UserPerfileEditableActivity: BaseDrawerActivity()
     private var selectedImageUri: Uri? = null
     private lateinit var auth: FirebaseAuth
     private lateinit var storage: FirebaseStorage
+    private lateinit var user: UserClass
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -32,6 +34,9 @@ class UserPerfileEditableActivity: BaseDrawerActivity()
 
         //Inicializa os objetos
         userPerfileEditableViewHolder = UserPerfileEditableViewHolder(this)
+
+        //inicializando a classe user
+        user = UserClass()
 
         //Inicializa o Auth do Firebase
         FirebaseApp.initializeApp(this)
@@ -68,8 +73,6 @@ class UserPerfileEditableActivity: BaseDrawerActivity()
                     if (bitmap != null) {
                         userPerfileEditableViewHolder.ivPerfilUsuario.setImageBitmap(bitmap)
                     }
-
-                   savedEditablePhoto(uri)
                 }
             }
         }
@@ -81,6 +84,10 @@ class UserPerfileEditableActivity: BaseDrawerActivity()
             }
 
             pickImageLauncher.launch(intent)
+        }
+
+        userPerfileEditableViewHolder.btnSalvar.setOnClickListener {
+            savedUserData()
         }
     }
 
@@ -171,18 +178,53 @@ class UserPerfileEditableActivity: BaseDrawerActivity()
         return output
     }
 
-    private fun savedEditablePhoto(uri: Uri)
-    {
+    private fun savedUserData() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val storageRef = storage.reference
-        val perfilRef = storageRef.child("arquivos/$userId/perfil/fotodeperfil.jpg")
 
-        perfilRef.putFile(uri)
-            .addOnSuccessListener  {
-                Toast.makeText(this, "Foto de perfil atualizada!", Toast.LENGTH_SHORT).show()
+        // Atualiza os dados no objeto UserClass
+        user.uid = userId
+        user.nomeCompleto = userPerfileEditableViewHolder.etNomeCompletoDado.text.toString()
+        user.idade = userPerfileEditableViewHolder.etIdadeDado.text.toString().toIntOrNull() ?: 0
+        user.email = auth.currentUser?.email ?: ""
+
+        // 🔹 Agora o upload da imagem é feito APENAS ao clicar em “Salvar”
+        if (selectedImageUri != null) {
+            val storageRef = storage.reference
+            val perfilRef = storageRef.child("arquivos/$userId/perfil/fotodeperfil.jpg")
+
+            perfilRef.putFile(selectedImageUri!!)
+                .addOnSuccessListener {
+                    perfilRef.downloadUrl.addOnSuccessListener { uri ->
+                        user.fotoPerfil = uri.toString()
+                        saveUserToDatabase(userId)
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "Falha ao enviar foto: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            // Nenhuma nova foto foi selecionada
+            saveUserToDatabase(userId)
+        }
+    }
+
+    private fun saveUserToDatabase(userId: String)
+    {
+        val database = com.google.firebase.database.FirebaseDatabase.getInstance()
+        val userRef = database.getReference("users").child(userId)
+
+        userRef.setValue(user)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Dados salvos com sucesso!", Toast.LENGTH_SHORT).show()
+
+                // Volta para a tela principal do usuário
+                val intent = Intent(this, UserActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+                finish() // finaliza a Activity atual para não voltar com o botão "voltar"
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this, "Falha ao enviar foto: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Erro ao salvar dados: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 }
