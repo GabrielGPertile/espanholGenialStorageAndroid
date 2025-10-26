@@ -1,5 +1,6 @@
 package com.example.espanholgenialstorageandroid.activity
 
+import android.content.Intent
 import android.os.Bundle
 import com.example.espanholgenialstorageandroid.R
 import com.example.espanholgenialstorageandroid.viewHolder.CreatePhotoStorageViewHolder
@@ -23,5 +24,18 @@ class CreatePhotoStorageActivity : BaseDrawerActivity()
         )
 
         loadProfilePhotoInDrawer()
+
+        //configuração dos botões
+        createPhotoStorageViewHolder.btnCanelar.setOnClickListener {
+            cancelInsertPhoto()
+        }
+    }
+
+    private fun cancelInsertPhoto()
+    {
+       /* val intent = Intent(this, DashboardActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)*/
+        finish()
     }
 }
