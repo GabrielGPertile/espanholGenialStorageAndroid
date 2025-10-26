@@ -25,6 +25,8 @@ class UserActivity: BaseDrawerActivity()
             userActivityViewHolder.toolbar
         )
 
+        loadProfilePhotoInDrawer()
+
         //configuração do botão
         userActivityViewHolder.btnEditar.setOnClickListener {
             navigateToUserPerfileEditableActivity()
