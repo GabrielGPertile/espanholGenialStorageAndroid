@@ -27,55 +27,115 @@
             android:layout_height="match_parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/content_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp">
+                android:padding="8dp">
 
-                <!-- Imagem 1 -->
+                <!-- Guideline vertical para dividir a tela em 2 colunas -->
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.5" />
+
+                <!-- Imagem 1 (esquerda) -->
                 <ImageView
                     android:id="@+id/ivInserirAudio"
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
+                    android:layout_width="0dp"
+                    android:layout_height="150dp"
                     android:src="@drawable/logo_inserir_audio"
-                    android:contentDescription="Logo Inserir Áudio"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:scaleType="centerCrop"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintEnd_toStartOf="@id/guideline_vertical"
+                    app:layout_constraintTop_toTopOf="parent"/>
 
-                <!-- Imagem 2 -->
+                <TextView
+                    android:id="@+id/tvInserirAudio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Inserir Áudio"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:background="#80000000"
+                    android:padding="4dp"
+                    app:layout_constraintBottom_toBottomOf="@id/ivInserirAudio"
+                    app:layout_constraintStart_toStartOf="@id/ivInserirAudio"
+                    app:layout_constraintEnd_toEndOf="@id/ivInserirAudio"/>
+
+                <!-- Imagem 2 (direita) -->
                 <ImageView
                     android:id="@+id/ivInserirImagem"
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
+                    android:layout_width="0dp"
+                    android:layout_height="150dp"
                     android:src="@drawable/logo_inserir_imagem"
-                    android:contentDescription="Logo Inserir Imagem"
-                    app:layout_constraintTop_toBottomOf="@id/ivInserirAudio"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintStart_toStartOf="@id/guideline_vertical"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="24dp" />
+                    app:layout_constraintTop_toTopOf="@id/ivInserirAudio"/>
 
+                <TextView
+                    android:id="@+id/tvInserirImagem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Inserir Imagem"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:background="#80000000"
+                    android:padding="4dp"
+                    app:layout_constraintBottom_toBottomOf="@id/ivInserirImagem"
+                    app:layout_constraintStart_toStartOf="@id/ivInserirImagem"
+                    app:layout_constraintEnd_toEndOf="@id/ivInserirImagem"/>
+
+                <!-- Imagem 3 (linha 2 esquerda) -->
                 <ImageView
                     android:id="@+id/ivInserirVideos"
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
+                    android:layout_width="0dp"
+                    android:layout_height="150dp"
                     android:src="@drawable/logo_inserir_video"
-                    android:contentDescription="Logo Inserir Videos"
-                    app:layout_constraintTop_toBottomOf="@id/ivInserirImagem"
+                    android:scaleType="centerCrop"
+                    android:layout_marginTop="16dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="24dp" />
+                    app:layout_constraintEnd_toStartOf="@id/guideline_vertical"
+                    app:layout_constraintTop_toBottomOf="@id/ivInserirAudio"/>
 
+                <TextView
+                    android:id="@+id/tvInserirVideos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Inserir Vídeos"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:background="#80000000"
+                    android:padding="4dp"
+                    app:layout_constraintBottom_toBottomOf="@id/ivInserirVideos"
+                    app:layout_constraintStart_toStartOf="@id/ivInserirVideos"
+                    app:layout_constraintEnd_toEndOf="@id/ivInserirVideos"/>
+
+                <!-- Imagem 4 (linha 2 direita) -->
                 <ImageView
                     android:id="@+id/ivInserirFuturasAtualizacoes"
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
+                    android:layout_width="0dp"
+                    android:layout_height="150dp"
                     android:src="@drawable/logo_inserir_futuras_atualizacao"
-                    android:contentDescription="Logo Inserir Imagem"
-                    app:layout_constraintTop_toBottomOf="@id/ivInserirVideos"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:scaleType="centerCrop"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintStart_toStartOf="@id/guideline_vertical"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="24dp" />
+                    app:layout_constraintTop_toBottomOf="@id/ivInserirImagem"/>
+
+                <TextView
+                    android:id="@+id/tvInserirFuturasAtualizacoes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Futuras Atualizações"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:background="#80000000"
+                    android:padding="4dp"
+                    app:layout_constraintBottom_toBottomOf="@id/ivInserirFuturasAtualizacoes"
+                    app:layout_constraintStart_toStartOf="@id/ivInserirFuturasAtualizacoes"
+                    app:layout_constraintEnd_toEndOf="@id/ivInserirFuturasAtualizacoes"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
