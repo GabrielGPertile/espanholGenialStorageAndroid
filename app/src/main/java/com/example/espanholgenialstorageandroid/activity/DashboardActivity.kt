@@ -19,5 +19,6 @@ class DashboardActivity: BaseDrawerActivity()
             dashboardActivityViewHolder.toolbar
         )
 
+        loadProfilePhotoInDrawer()
     }
 }
