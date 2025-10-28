@@ -58,7 +58,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@id/tvPhotoName"
                     android:hint="Nome da foto"
-                    android:inputType="text"
+                    android:inputType="textCapWords"
                     android:focusableInTouchMode="true"
                     android:layout_marginTop="8dp"/>
 
@@ -76,7 +76,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@id/tvPhotoNameEspanhol"
                     android:hint="Nome da foto em espanhol"
-                    android:inputType="text"
+                    android:inputType="textCapWords"
                     android:focusableInTouchMode="true"
                     android:layout_marginTop="8dp"/>
 
