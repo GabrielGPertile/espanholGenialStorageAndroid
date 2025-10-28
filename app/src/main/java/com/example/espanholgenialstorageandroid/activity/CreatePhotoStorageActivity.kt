@@ -132,7 +132,7 @@ class CreatePhotoStorageActivity : BaseDrawerActivity() {
         val nomeEs = createPhotoStorageViewHolder.etPhotoNameEspanhol.text.toString().trim()
 
         val storageRef = FirebaseStorage.getInstance().reference
-        val imageRef = storageRef.child("arquivos/$userId/imagensPrivadas/${nomePt}_${nomeEs}.jpg")
+
 
         val regexSemEspacos = Regex("\\s")
 
@@ -151,18 +151,23 @@ class CreatePhotoStorageActivity : BaseDrawerActivity() {
             return
         }
 
+        val nomePtCapitalizado = nomePt.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+        val nomeEsCapitalizado = nomeEs.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+
+        val imageRef = storageRef.child("arquivos/$userId/imagensPrivadas/${nomePtCapitalizado}_${nomeEsCapitalizado}.jpg")
+
         imageRef.putFile(selectedImageUri!!)
             .addOnSuccessListener {
                 imageRef.downloadUrl.addOnSuccessListener { uri ->
                     val imageDataClass = ImageDataClass(
-                        nomePt = nomePt,
-                        nomeEs = nomeEs,
+                        nomePt = nomePtCapitalizado,
+                        nomeEs = nomeEsCapitalizado,
                         url = uri.toString(),
                         userId = userId
                     )
 
                     firestore.collection("imagens")
-                        .document("${nomePt}_${nomeEs}")
+                        .document("${nomePtCapitalizado}_${nomeEsCapitalizado}")
                         .set(imageDataClass)
                         .addOnSuccessListener {
                             Toast.makeText(this, "Imagem salva com sucesso!", Toast.LENGTH_SHORT).show()
