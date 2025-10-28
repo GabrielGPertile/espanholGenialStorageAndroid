@@ -84,6 +84,13 @@ class CreatePhotoStorageActivity : BaseDrawerActivity() {
         }
     }
 
+    fun contarPalavrasCamelCase(texto: String): Int {
+        if (texto.isEmpty()) return 0
+        // Conta cada letra maiúscula como início de palavra + 1 para a primeira palavra
+        val palavras = texto.count { it.isUpperCase() }
+        return palavras
+    }
+
     private fun getCorrectlyOrientedBitmap(uri: Uri): Bitmap? {
         val inputSteam = contentResolver.openInputStream(uri) ?: return null
         val bitmap = BitmapFactory.decodeStream(inputSteam)
@@ -133,8 +140,10 @@ class CreatePhotoStorageActivity : BaseDrawerActivity() {
 
         val storageRef = FirebaseStorage.getInstance().reference
 
-
         val regexSemEspacos = Regex("\\s")
+
+        val quantidadePalavraPt = contarPalavrasCamelCase(nomePt)
+        val quantidadePalavraEs = contarPalavrasCamelCase(nomeEs)
 
         if (selectedImageUri == null) {
             Toast.makeText(this, "Selecione uma imagem", Toast.LENGTH_SHORT).show()
@@ -143,6 +152,12 @@ class CreatePhotoStorageActivity : BaseDrawerActivity() {
 
         if (nomePt.isEmpty() || nomeEs.isEmpty()) {
             Toast.makeText(this, "Preencha os dois nomes", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if(quantidadePalavraEs > 3 || quantidadePalavraPt > 3)
+        {
+            Toast.makeText(this, "Deve ter menos que 3 palavras cada campo", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -166,7 +181,9 @@ class CreatePhotoStorageActivity : BaseDrawerActivity() {
                         userId = userId
                     )
 
-                    firestore.collection("imagens")
+                    firestore.collection("users")
+                        .document(userId)
+                        .collection("imagens")
                         .document("${nomePtCapitalizado}_${nomeEsCapitalizado}")
                         .set(imageDataClass)
                         .addOnSuccessListener {
