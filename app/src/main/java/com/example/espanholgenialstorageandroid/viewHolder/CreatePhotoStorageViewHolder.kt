@@ -18,6 +18,7 @@ class CreatePhotoStorageViewHolder(activity: Activity)
     val etPhotoName: EditText = activity.findViewById(R.id.etPhotoName)
     val tvPhotoNameEspanhol: TextView = activity.findViewById(R.id.tvPhotoNameEspanhol)
     val etPhotoNameEspanhol: EditText = activity.findViewById(R.id.etPhotoNameEspanhol)
+    val btnCasoDeUso: Button = activity.findViewById(R.id.btnCasoDeUso)
     val btnSalvar: Button = activity.findViewById(R.id.btnSalvar)
     val btnCanelar: Button = activity.findViewById(R.id.btnCancelar)
 

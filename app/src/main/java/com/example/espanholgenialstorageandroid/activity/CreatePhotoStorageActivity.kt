@@ -75,6 +75,10 @@ class CreatePhotoStorageActivity : BaseDrawerActivity() {
             pickImageLauncher.launch(intent)
         }
 
+        createPhotoStorageViewHolder.btnCasoDeUso.setOnClickListener {
+            explicacoes()
+        }
+
         createPhotoStorageViewHolder.btnSalvar.setOnClickListener {
             savePhotoStorage()
         }
@@ -131,6 +135,26 @@ class CreatePhotoStorageActivity : BaseDrawerActivity() {
         }
 
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+    }
+
+    private fun explicacoes() {
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        builder.setTitle("Caso de Uso")
+        builder.setMessage(
+            "📌 Cada campo de edição só permite até 3 palavras.\n\n" +
+                    "📝 Cada palavra será contabilizada pelas letras maiúsculas.\n\n" +
+                    "🌎 Campo Nome da Foto (PT-BR): coloque palavras em português.\n" +
+                    "🇪🇸 Campo Foto em Espanhol: coloque palavras em espanhol.\n\n" +
+                    "⚠️ Não utilize espaços nos nomes.\n\n" +
+                    "💡 Exemplo:\n" +
+                    "PT-BR: MaçaVermelha\n" +
+                    "ES: ManzanaRojo\n" +
+                    "➡️ A imagem será salva como: MaçaVerde_ManzanaVierde.jpg"
+        )
+        builder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
     }
 
     private fun savePhotoStorage() {
