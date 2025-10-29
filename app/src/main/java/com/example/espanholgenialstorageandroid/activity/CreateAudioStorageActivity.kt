@@ -4,18 +4,21 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
+import android.text.InputFilter
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.espanholgenialstorageandroid.R
 import com.example.espanholgenialstorageandroid.model.AudioDataClass
+import com.example.espanholgenialstorageandroid.strategy.SanitizeFileNameInterface
+import com.example.espanholgenialstorageandroid.strategy.SanitizeFileNameStrategy
 import com.example.espanholgenialstorageandroid.viewHolder.CreateAudioStorageViewHolder
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 
-class CreateAudioStorageActivity : BaseDrawerActivity()
+class CreateAudioStorageActivity: BaseDrawerActivity()
 {
     private lateinit var createAudioStorageViewHolder: CreateAudioStorageViewHolder
     private lateinit var pickAudioLauncher: ActivityResultLauncher<Intent>
@@ -97,26 +100,31 @@ class CreateAudioStorageActivity : BaseDrawerActivity()
         }
     }
 
-    private fun saveAudioStorage()
-    {
+    private fun saveAudioStorage() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val nome = createAudioStorageViewHolder.etAudioName.text.toString().trim()
+        val rawName = createAudioStorageViewHolder.etAudioName.text.toString().trim()
 
-        if (selectedAudioUri == null || nome.isEmpty()) {
+        if (selectedAudioUri == null || rawName.isEmpty()) {
             Toast.makeText(this, "Selecione um áudio e digite o nome", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val audioRef = storage.reference.child("arquivos/$userId/audiosPrivados/${nome}.mp3")
+        val sanitizer: SanitizeFileNameInterface = SanitizeFileNameStrategy()
+
+        val sanitizedFileName = try {
+            sanitizer.sanitizeFileName(rawName)
+        } catch (e: IllegalArgumentException) {
+            Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val audioRef = storage.reference.child("arquivos/$userId/audiosPrivados/${sanitizedFileName}.mp3")
 
         audioRef.putFile(selectedAudioUri!!)
             .addOnSuccessListener {
-                audioRef.downloadUrl.addOnSuccessListener { uri ->
-                    Toast.makeText(this, "Imagem salva com sucesso!", Toast.LENGTH_LONG).show()
-                    // Limpa campos
-                    createAudioStorageViewHolder.etAudioName.text?.clear()
-                    selectedAudioUri = null
-                }
+                Toast.makeText(this, "Áudio salvo com sucesso!", Toast.LENGTH_LONG).show()
+                createAudioStorageViewHolder.etAudioName.text?.clear()
+                selectedAudioUri = null
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Falha ao enviar áudio: ${e.message}", Toast.LENGTH_SHORT).show()
