@@ -150,10 +150,31 @@ class CreateAudioStorageActivity: BaseDrawerActivity()
 
         audioRef.putFile(selectedAudioUri!!)
             .addOnSuccessListener {
-                Toast.makeText(this, "Áudio salvo com sucesso!", Toast.LENGTH_LONG).show()
-                createAudioStorageViewHolder.ivAudio.setImageResource(R.drawable.logo_inserir_audio)
-                createAudioStorageViewHolder.etAudioName.text?.clear()
-                selectedAudioUri = null
+                // Aqui o upload terminou, agora pega a URL de download
+                audioRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                    val audioDataClass = AudioDataClass(
+                        nomeAudio = sanitizedFileName,
+                        url = downloadUri.toString(), // agora sim é a URL
+                        userId = userId
+                    )
+
+                    firestore.collection("users")
+                        .document(userId)
+                        .collection("audios")
+                        .document(sanitizedFileName)
+                        .set(audioDataClass)
+                        .addOnSuccessListener {
+                            Toast.makeText(this, "Áudio salvo com sucesso!", Toast.LENGTH_LONG).show()
+                            createAudioStorageViewHolder.ivAudio.setImageResource(R.drawable.logo_inserir_audio)
+                            createAudioStorageViewHolder.etAudioName.text?.clear()
+                            selectedAudioUri = null
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(this, "Erro ao salvar no banco: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
+                }.addOnFailureListener { e ->
+                    Toast.makeText(this, "Falha ao obter URL de download: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Falha ao enviar áudio: ${e.message}", Toast.LENGTH_SHORT).show()
