@@ -212,7 +212,11 @@ class CreatePhotoStorageActivity : BaseDrawerActivity() {
                         .set(imageDataClass)
                         .addOnSuccessListener {
                             Toast.makeText(this, "Imagem salva com sucesso!", Toast.LENGTH_SHORT).show()
-                            finish()
+
+
+                            createPhotoStorageViewHolder.ivPhoto.setImageResource(R.drawable.logo_inserir_imagem)
+                            createPhotoStorageViewHolder.etPhotoName.text?.clear()
+                            createPhotoStorageViewHolder.etPhotoNameEspanhol.text?.clear()
                         }
                         .addOnFailureListener { e ->
                             Toast.makeText(this, "Erro ao salvar no banco: ${e.message}", Toast.LENGTH_SHORT).show()
