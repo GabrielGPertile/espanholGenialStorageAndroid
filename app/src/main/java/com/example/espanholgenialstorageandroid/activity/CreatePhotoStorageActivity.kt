@@ -12,6 +12,8 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.espanholgenialstorageandroid.R
 import com.example.espanholgenialstorageandroid.model.ImageDataClass
+import com.example.espanholgenialstorageandroid.strategy.SanitizeFileNameInterface
+import com.example.espanholgenialstorageandroid.strategy.SanitizeFileNameStrategy
 import com.example.espanholgenialstorageandroid.viewHolder.CreatePhotoStorageViewHolder
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
@@ -158,6 +160,9 @@ class CreatePhotoStorageActivity : BaseDrawerActivity() {
     }
 
     private fun savePhotoStorage() {
+        val nomePtSanitizado: String?
+        val nomeEsSanitizado: String?
+
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val nomePt = createPhotoStorageViewHolder.etPhotoName.text.toString().trim()
         val nomeEs = createPhotoStorageViewHolder.etPhotoNameEspanhol.text.toString().trim()
@@ -168,6 +173,8 @@ class CreatePhotoStorageActivity : BaseDrawerActivity() {
 
         val quantidadePalavraPt = contarPalavrasCamelCase(nomePt)
         val quantidadePalavraEs = contarPalavrasCamelCase(nomeEs)
+
+        val sanitizer: SanitizeFileNameInterface = SanitizeFileNameStrategy()
 
         if (selectedImageUri == null) {
             Toast.makeText(this, "Selecione uma imagem", Toast.LENGTH_SHORT).show()
@@ -193,7 +200,15 @@ class CreatePhotoStorageActivity : BaseDrawerActivity() {
         val nomePtCapitalizado = nomePt.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
         val nomeEsCapitalizado = nomeEs.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
 
-        val imageRef = storageRef.child("arquivos/$userId/imagensPrivadas/${nomePtCapitalizado}_${nomeEsCapitalizado}.jpg")
+        try {
+            nomePtSanitizado = sanitizer.sanitizeFileName(nomePtCapitalizado)
+            nomeEsSanitizado = sanitizer.sanitizeFileName(nomeEsCapitalizado)
+        } catch (e: IllegalArgumentException) {
+            Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val imageRef = storageRef.child("arquivos/$userId/imagensPrivadas/${nomePtSanitizado}_${nomeEsSanitizado}.jpg")
 
         imageRef.putFile(selectedImageUri!!)
             .addOnSuccessListener {
