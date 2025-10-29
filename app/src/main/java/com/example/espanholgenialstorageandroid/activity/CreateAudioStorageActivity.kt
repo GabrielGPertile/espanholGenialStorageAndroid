@@ -95,6 +95,10 @@ class CreateAudioStorageActivity: BaseDrawerActivity()
             }
         }
 
+        createAudioStorageViewHolder.btnCasoDeUso.setOnClickListener {
+            explicacoes()
+        }
+
         createAudioStorageViewHolder.btnSalvar.setOnClickListener {
             saveAudioStorage()
         }
@@ -102,6 +106,24 @@ class CreateAudioStorageActivity: BaseDrawerActivity()
         createAudioStorageViewHolder.btnCanelar.setOnClickListener {
             cancelInsertAuio()
         }
+    }
+
+    private fun explicacoes() {
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        builder.setTitle("Caso de Uso - Áudio")
+        builder.setMessage(
+            "📌 Digite o nome do áudio que deseja salvar.\n\n" +
+                    "📝 O nome será automaticamente convertido para **letras minúsculas**.\n\n" +
+                    "⚠️ Não utilize espaços ou caracteres especiais que não sejam permitidos em nomes de arquivos.\n\n" +
+                    "💡 Exemplo:\n" +
+                    "Nome digitado: MeuAudioLegal\n" +
+                    "➡️ O arquivo será salvo como: meuaudiolegal.mp3\n\n" +
+                    "🎵 Após selecionar um áudio, toque no ícone para reproduzir antes de salvar."
+        )
+        builder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
     }
 
     private fun saveAudioStorage() {
