@@ -30,6 +30,10 @@ class DashboardActivity: BaseDrawerActivity()
         dashboardActivityViewHolder.ivInserirAudio.setOnClickListener {
             navigateToCreateAudio()
         }
+
+        dashboardActivityViewHolder.ivInserirVideos.setOnClickListener {
+            navigateToCreateVideo()
+        }
     }
 
     private fun navigateToCreateImage()
@@ -41,6 +45,12 @@ class DashboardActivity: BaseDrawerActivity()
     private fun navigateToCreateAudio()
     {
         val intent = Intent(this, CreateAudioStorageActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun navigateToCreateVideo()
+    {
+        val intent = Intent(this, CreateVideoStorageActivity::class.java)
         startActivity(intent)
     }
 }
