@@ -129,6 +129,7 @@ class CreateAudioStorageActivity: BaseDrawerActivity()
         audioRef.putFile(selectedAudioUri!!)
             .addOnSuccessListener {
                 Toast.makeText(this, "Áudio salvo com sucesso!", Toast.LENGTH_LONG).show()
+                createAudioStorageViewHolder.ivAudio.setImageResource(R.drawable.logo_inserir_audio)
                 createAudioStorageViewHolder.etAudioName.text?.clear()
                 selectedAudioUri = null
             }
