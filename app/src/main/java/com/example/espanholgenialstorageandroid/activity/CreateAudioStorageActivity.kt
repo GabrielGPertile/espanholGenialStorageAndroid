@@ -98,6 +98,10 @@ class CreateAudioStorageActivity: BaseDrawerActivity()
         createAudioStorageViewHolder.btnSalvar.setOnClickListener {
             saveAudioStorage()
         }
+
+        createAudioStorageViewHolder.btnCanelar.setOnClickListener {
+            cancelInsertAuio()
+        }
     }
 
     private fun saveAudioStorage() {
@@ -112,7 +116,9 @@ class CreateAudioStorageActivity: BaseDrawerActivity()
         val sanitizer: SanitizeFileNameInterface = SanitizeFileNameStrategy()
 
         val sanitizedFileName = try {
-            sanitizer.sanitizeFileName(rawName)
+            val sanitized = sanitizer.sanitizeFileName(rawName)
+
+            sanitized?.lowercase() ?: return
         } catch (e: IllegalArgumentException) {
             Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
             return
@@ -129,5 +135,10 @@ class CreateAudioStorageActivity: BaseDrawerActivity()
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Falha ao enviar áudio: ${e.message}", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun cancelInsertAuio()
+    {
+        finish()
     }
 }
