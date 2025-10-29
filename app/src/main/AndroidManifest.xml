@@ -94,6 +94,16 @@
             </intent-filter>
         </activity>
 
+        <!-- Configuração do CreateVideoStorageActivity -->
+        <activity
+            android:name=".activity.CreateVideoStorageActivity"
+            android:exported="true">
+
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>
