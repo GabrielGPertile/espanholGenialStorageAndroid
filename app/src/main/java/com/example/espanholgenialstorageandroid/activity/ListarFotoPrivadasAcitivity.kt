@@ -84,7 +84,37 @@ class ListarFotoPrivadasAcitivity : BaseDrawerActivity()
     }
 
     private fun excluirImagem(nome: String) {
-        Toast.makeText(this, "Excluir: $nome", Toast.LENGTH_SHORT).show()
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val storageRef = storage.reference.child("arquivos/$userId/imagensPrivadas/$nome")
+
+        // Remove do Storage
+        storageRef.delete()
+            .addOnSuccessListener {
+                // Remove também do Firestore
+                val firestore = FirebaseFirestore.getInstance()
+
+                // nomeImagem vem no formato "NomePt_NomeEs.jpg"
+                val nomeSemExtensao = nome.removeSuffix(".jpg")
+
+                firestore.collection("users")
+                    .document(userId)
+                    .collection("imagens")
+                    .document(nomeSemExtensao)
+                    .delete()
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Imagem excluída com sucesso!", Toast.LENGTH_SHORT).show()
+
+                        // Remove da lista da RecyclerView
+                        listaImagens.remove(nome)
+                        adapter.notifyDataSetChanged()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(this, "Erro ao excluir do Firestore: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao excluir do Storage: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun tornarImagemPublica(nome: String) {
