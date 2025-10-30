@@ -46,7 +46,13 @@ class ListarFotoPrivadasAcitivity : BaseDrawerActivity()
 
         recyclerView = findViewById(R.id.recyclerViewImagens)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = PrivatePhotoAdapter(listaImagens)
+        adapter = PrivatePhotoAdapter(
+            listaImagens,
+            onVisualizar = { nome -> visualizarImagem(nome) },
+            onEditar = { nome -> editarImagem(nome) },
+            onExcluir = { nome -> excluirImagem(nome) },
+            onTornarPublico = { nome -> tornarImagemPublica(nome) }
+        )
         recyclerView.adapter = adapter
 
         carregarNomesImagens()
@@ -67,5 +73,21 @@ class ListarFotoPrivadasAcitivity : BaseDrawerActivity()
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Erro ao carregar: ${e.message}", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun visualizarImagem(nome: String) {
+        Toast.makeText(this, "Visualizar: $nome", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun editarImagem(nome: String) {
+        Toast.makeText(this, "Editar: $nome", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun excluirImagem(nome: String) {
+        Toast.makeText(this, "Excluir: $nome", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun tornarImagemPublica(nome: String) {
+        Toast.makeText(this, "Tornar público: $nome", Toast.LENGTH_SHORT).show()
     }
 }
