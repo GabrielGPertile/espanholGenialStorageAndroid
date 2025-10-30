@@ -83,6 +83,10 @@ class CreateVideoStorageActivity : BaseDrawerActivity() {
         createVideoStorageViewHolder.btnSalvar.setOnClickListener {
             saveVideoStorage()
         }
+
+        createVideoStorageViewHolder.btnCanelar.setOnClickListener {
+            cancelInsertVideo()
+        }
     }
 
     private fun saveVideoStorage() {
@@ -151,5 +155,10 @@ class CreateVideoStorageActivity : BaseDrawerActivity() {
                 Toast.makeText(this, "Falha ao enviar vídeo: ${e.message}", Toast.LENGTH_SHORT)
                     .show()
             }
+    }
+
+    private fun cancelInsertVideo()
+    {
+        finish()
     }
 }
