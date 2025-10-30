@@ -5,6 +5,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.VideoView
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.espanholgenialstorageandroid.R
@@ -13,6 +14,7 @@ import com.google.android.material.navigation.NavigationView
 class CreateVideoStorageViewHolder(activity: Activity)
 {
     val ivVideo: ImageView = activity.findViewById(R.id.ivVideo)
+    val videoView: VideoView = activity.findViewById(R.id.videoView)
     val tvVideoName: TextView = activity.findViewById(R.id.tvVideoName)
     val etVideoName: EditText = activity.findViewById(R.id.etVideoName)
     val btnCasoDeUso: Button = activity.findViewById(R.id.btnCasoDeUso)
