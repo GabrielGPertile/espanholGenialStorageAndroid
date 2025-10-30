@@ -3,7 +3,10 @@ package com.example.espanholgenialstorageandroid.activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import com.example.espanholgenialstorageandroid.R
 import com.example.espanholgenialstorageandroid.model.ImageDataClass
 import com.example.espanholgenialstorageandroid.viewHolder.CreatePhotoStorageViewHolder
@@ -25,7 +28,7 @@ class CreateVideoStorageActivity : BaseDrawerActivity()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.create_photo_storage)
+        setContentView(R.layout.create_video_storage)
 
         createVideoStorageViewHolder = CreateVideoStorageViewHolder(this)
 
@@ -42,6 +45,37 @@ class CreateVideoStorageActivity : BaseDrawerActivity()
         )
 
         loadProfilePhotoInDrawer()
-    }
 
+        pickVideoLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val data: Intent? = result.data
+                val uri = data?.data
+
+                if (uri != null) {
+                    selectedVideoUri = uri
+
+                    // Esconde a imagem e mostra o vídeo
+                    createVideoStorageViewHolder.ivVideo.visibility = View.GONE
+                    createVideoStorageViewHolder.videoView.visibility = View.VISIBLE
+
+                    // Exibe o vídeo no VideoView
+                    createVideoStorageViewHolder.videoView.setVideoURI(uri)
+                    createVideoStorageViewHolder.videoView.start()
+
+                    Toast.makeText(this, "🎬 Vídeo selecionado!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        //configuração dos botões
+        createVideoStorageViewHolder.ivVideo.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK).apply {
+                type = "video/*"
+            }
+
+            pickVideoLauncher.launch(intent)
+        }
+    }
 }
