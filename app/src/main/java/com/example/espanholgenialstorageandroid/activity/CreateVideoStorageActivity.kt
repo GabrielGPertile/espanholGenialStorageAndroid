@@ -80,6 +80,10 @@ class CreateVideoStorageActivity : BaseDrawerActivity() {
             pickVideoLauncher.launch(intent)
         }
 
+        createVideoStorageViewHolder.btnCasoDeUso.setOnClickListener {
+            explicacoes()
+        }
+
         createVideoStorageViewHolder.btnSalvar.setOnClickListener {
             saveVideoStorage()
         }
@@ -87,6 +91,24 @@ class CreateVideoStorageActivity : BaseDrawerActivity() {
         createVideoStorageViewHolder.btnCanelar.setOnClickListener {
             cancelInsertVideo()
         }
+    }
+
+    private fun explicacoes() {
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        builder.setTitle("Caso de Uso - Vídeo")
+        builder.setMessage(
+            "📌 Digite o nome do vídeo que deseja salvar.\n\n" +
+                    "📝 O nome será automaticamente convertido para **letras minúsculas**.\n\n" +
+                    "⚠️ Não utilize espaços ou caracteres especiais que não sejam permitidos em nomes de arquivos.\n\n" +
+                    "💡 Exemplo:\n" +
+                    "Nome digitado: MeuVideoLegal\n" +
+                    "➡️ O arquivo será salvo como: meuvideolegal.mp4\n\n" +
+                    "🎬 Após selecionar um vídeo, toque no ícone para reproduzir antes de salvar."
+        )
+        builder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
     }
 
     private fun saveVideoStorage() {
