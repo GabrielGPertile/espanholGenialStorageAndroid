@@ -9,11 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.espanholgenialstorageandroid.R
 
 class PrivatePhotoAdapter(
-    private val listaImagensPrivadas: List<String>,
+    private val listaImagensPrivadas: MutableList<String>,
     private val onVisualizar: (String) -> Unit,
     private val onEditar: (String) -> Unit,
     private val onExcluir: (String) -> Unit,
-    private val onTornarPublico: (String) -> Unit
+    private val onTornarPublico: (String) -> Unit,
 ): RecyclerView.Adapter<PrivatePhotoAdapter.ImagemViewHolder>()
 {
     class ImagemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -38,6 +38,7 @@ class PrivatePhotoAdapter(
         holder.btnEditar.setOnClickListener { onEditar(nome) }
         holder.btnExcluir.setOnClickListener { onExcluir(nome) }
         holder.btnTornarPublico.setOnClickListener { onTornarPublico(nome) }
+
     }
 
     override fun getItemCount(): Int = listaImagensPrivadas.size
