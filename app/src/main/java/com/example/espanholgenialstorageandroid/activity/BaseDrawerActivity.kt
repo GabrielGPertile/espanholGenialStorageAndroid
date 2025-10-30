@@ -44,7 +44,7 @@ abstract class BaseDrawerActivity : AppCompatActivity()
                 R.id.menu_perfil -> {
                     navigateToUserActivity()
                 }
-                R.id.menu_dashboard_principal -> { /* abrir configurações */ }
+                R.id.menu_dashboard_principal -> { navigateToMainDashboard() }
                 R.id.menu_dashboard_meusAudios -> {}
                 R.id.menu_dashboard_meusVideos -> {}
                 R.id.menu_dashboard_minhasFotos -> {}
@@ -74,6 +74,12 @@ abstract class BaseDrawerActivity : AppCompatActivity()
     {
         val intent = Intent(this, UserActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+    }
+
+    private fun navigateToMainDashboard()
+    {
+        val intent = Intent(this, DashboardActivity::class.java)
         startActivity(intent)
     }
 
