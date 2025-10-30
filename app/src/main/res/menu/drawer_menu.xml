@@ -12,14 +12,14 @@
         android:id="@+id/menu_dashboard_principal"
         android:title="Dashboard Principal" />
     <item
-        android:id="@+id/menu_dashboard_meusAudios"
-        android:title="Meus audios" />
+        android:id="@+id/menu_dashboard_meusAudiosPrivados"
+        android:title="Meus audios privados" />
     <item
-        android:id="@+id/menu_dashboard_meusVideos"
-        android:title="Meus vídeos" />
+        android:id="@+id/menu_dashboard_meusVideosPrivados"
+        android:title="Meus vídeos privados" />
     <item
-        android:id="@+id/menu_dashboard_minhasFotos"
-        android:title="Minhas fotos" />
+        android:id="@+id/menu_dashboard_minhasFotosPrivadas"
+        android:title="Minhas fotos privadas" />
 
     <item
         android:id="@+id/menu_SobreNos"
