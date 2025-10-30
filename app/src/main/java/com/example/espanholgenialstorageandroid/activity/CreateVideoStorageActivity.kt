@@ -9,6 +9,9 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.espanholgenialstorageandroid.R
 import com.example.espanholgenialstorageandroid.model.ImageDataClass
+import com.example.espanholgenialstorageandroid.model.VideoDataClass
+import com.example.espanholgenialstorageandroid.strategy.SanitizeFileNameInterface
+import com.example.espanholgenialstorageandroid.strategy.SanitizeFileNameStrategy
 import com.example.espanholgenialstorageandroid.viewHolder.CreatePhotoStorageViewHolder
 import com.example.espanholgenialstorageandroid.viewHolder.CreateVideoStorageViewHolder
 import com.google.firebase.FirebaseApp
@@ -16,8 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 
-class CreateVideoStorageActivity : BaseDrawerActivity()
-{
+class CreateVideoStorageActivity : BaseDrawerActivity() {
     private lateinit var createVideoStorageViewHolder: CreateVideoStorageViewHolder
     private lateinit var pickVideoLauncher: ActivityResultLauncher<Intent>
     private var selectedVideoUri: Uri? = null
@@ -77,5 +79,77 @@ class CreateVideoStorageActivity : BaseDrawerActivity()
 
             pickVideoLauncher.launch(intent)
         }
+
+        createVideoStorageViewHolder.btnSalvar.setOnClickListener {
+            saveVideoStorage()
+        }
+    }
+
+    private fun saveVideoStorage() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val rawName = createVideoStorageViewHolder.etVideoName.text.toString().trim()
+
+        if (selectedVideoUri == null || rawName.isEmpty()) {
+            Toast.makeText(this, "Selecione um vídeo e digite o nome", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val sanitizer: SanitizeFileNameInterface = SanitizeFileNameStrategy()
+
+        val sanitizedFileName = try {
+            val sanitized = sanitizer.sanitizeFileName(rawName)
+            sanitized?.lowercase() ?: return
+        } catch (e: IllegalArgumentException) {
+            Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val videoRef =
+            storage.reference.child("arquivos/$userId/videosPrivados/${sanitizedFileName}.mp4")
+
+        videoRef.putFile(selectedVideoUri!!)
+            .addOnSuccessListener {
+                // Obtem a URL de download
+                videoRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                    val videoData = VideoDataClass(
+                        nomeVideo = sanitizedFileName,
+                        url = downloadUri.toString(),
+                        userId = userId
+                    )
+
+                    // Salva no Firestore
+                    firestore.collection("users")
+                        .document(userId)
+                        .collection("videos")
+                        .document(sanitizedFileName)
+                        .set(videoData) // <-- aqui usamos set()
+                        .addOnSuccessListener {
+                            Toast.makeText(this, "🎬 Vídeo salvo com sucesso!", Toast.LENGTH_LONG)
+                                .show()
+                            createVideoStorageViewHolder.ivVideo.setImageResource(R.drawable.logo_inserir_video)
+                            createVideoStorageViewHolder.videoView.visibility = View.GONE
+                            createVideoStorageViewHolder.ivVideo.visibility = View.VISIBLE
+                            createVideoStorageViewHolder.etVideoName.text?.clear()
+                            selectedVideoUri = null
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(
+                                this,
+                                "Erro ao salvar no banco: ${e.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                }.addOnFailureListener { e ->
+                    Toast.makeText(
+                        this,
+                        "Falha ao obter URL de download: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Falha ao enviar vídeo: ${e.message}", Toast.LENGTH_SHORT)
+                    .show()
+            }
     }
 }
