@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.espanholgenialstorageandroid.R
 import com.example.espanholgenialstorageandroid.adapter.PrivatePhotoAdapter
+import com.example.espanholgenialstorageandroid.fragment.VisualizarImagemPrivadaDialogFragment
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -76,7 +77,22 @@ class ListarFotoPrivadasAcitivity : BaseDrawerActivity()
     }
 
     private fun visualizarImagem(nome: String) {
-        Toast.makeText(this, "Visualizar: $nome", Toast.LENGTH_SHORT).show()
+        val userId = auth.currentUser?.uid ?: return
+        val storageRef = storage.reference.child("arquivos/$userId/imagensPrivadas/$nome")
+
+        storageRef.downloadUrl
+            .addOnSuccessListener { uri ->
+                // Agora sim passamos a URL para o fragment
+                val fragment = VisualizarImagemPrivadaDialogFragment.newInstance(
+                    imageUrl = uri.toString(),
+                    campoTexto = nome,               // campo informativo
+                    imageNameFirebase = nome         // nome salvo no Firebase
+                )
+                fragment.show(supportFragmentManager, "visualizarImagem")
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao carregar imagem: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun editarImagem(nome: String) {
