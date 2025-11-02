@@ -2,15 +2,18 @@ package com.example.espanholgenialstorageandroid.activity
 
 import android.net.Uri
 import android.os.Bundle
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.espanholgenialstorageandroid.R
 import com.example.espanholgenialstorageandroid.adapter.PrivateAudioAdapter
 import com.example.espanholgenialstorageandroid.adapter.PrivateVideoAdapter
 import com.example.espanholgenialstorageandroid.fragment.VisualizarVideoPrivadoDialogFragment
+import com.example.espanholgenialstorageandroid.model.VideoDataClass
 import com.example.espanholgenialstorageandroid.strategy.SanitizeFileNameInterface
 import com.example.espanholgenialstorageandroid.strategy.SanitizeFileNameStrategy
 import com.google.firebase.FirebaseApp
@@ -114,8 +117,144 @@ class ListarVideoPrivadosAcitivity : BaseDrawerActivity()
     }
 
 
-    private fun editarVideo(nome: String) {
-        Toast.makeText(this, "Editar: $nome", Toast.LENGTH_SHORT).show()
+    private fun editarVideo(nomeAtual: String) {
+        val editText = EditText(this).apply { setText(nomeAtual.removeSuffix(".mp4")) }
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Editar nome do vídeo")
+            .setView(editText)
+            .setPositiveButton("Salvar", null)
+            .setNeutralButton("Selecionar novo vídeo", null)
+            .setNegativeButton("Cancelar", null)
+            .create()
+
+        dialog.show()
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            val novoNomeInput = editText.text.toString().trim()
+            if (novoNomeInput.isEmpty()) {
+                Toast.makeText(this, "O nome não pode ser vazio", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val sanitizer: SanitizeFileNameInterface = SanitizeFileNameStrategy()
+            val nomeSanitizado = try {
+                sanitizer.sanitizeFileName(novoNomeInput)?.lowercase()
+            } catch (e: IllegalArgumentException) {
+                Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            } ?: return@setOnClickListener
+
+            val novoNomeFinal = "$nomeSanitizado.mp4"
+
+            if (videoSelecionadoUri != null) {
+                substituirVideo(nomeAtual, novoNomeFinal, videoSelecionadoUri!!) {
+                    dialog.dismiss()
+                }
+            } else if (novoNomeFinal != nomeAtual) {
+                renomearVideo(nomeAtual, novoNomeFinal) {
+                    dialog.dismiss()
+                }
+            } else {
+                Toast.makeText(this, "Nada foi alterado", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener {
+            selecionarVideoLauncher.launch("video/*")
+        }
+    }
+
+    // Substitui vídeo antigo por novo arquivo
+    private fun substituirVideo(nomeAtual: String, novoNome: String, uri: Uri, onComplete: () -> Unit) {
+        val userId = auth.currentUser?.uid ?: return
+        val storageRefNovo = storage.reference.child("arquivos/$userId/videosPrivados/$novoNome")
+        val storageRefAtual = storage.reference.child("arquivos/$userId/videosPrivados/$nomeAtual")
+
+        storageRefNovo.putFile(uri).addOnSuccessListener {
+            storageRefNovo.downloadUrl.addOnSuccessListener { downloadUri ->
+                storageRefAtual.delete().addOnCompleteListener { task ->
+                    if (!task.isSuccessful) {
+                        Toast.makeText(this, "Erro ao apagar vídeo antigo: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                        return@addOnCompleteListener
+                    }
+
+                    // Atualiza Firestore
+                    firestore.collection("users")
+                        .document(userId)
+                        .collection("videos")
+                        .document(nomeAtual.removeSuffix(".mp4"))
+                        .delete()
+                        .addOnSuccessListener {
+                            firestore.collection("users")
+                                .document(userId)
+                                .collection("videos")
+                                .document(novoNome.removeSuffix(".mp4"))
+                                .set(
+                                    VideoDataClass(
+                                        nomeVideo = novoNome.removeSuffix(".mp4"),
+                                        visualizacao = "privado",
+                                        url = downloadUri.toString(),
+                                        userId = userId
+                                    )
+                                ).addOnSuccessListener {
+                                    Toast.makeText(this, "Vídeo atualizado com sucesso!", Toast.LENGTH_SHORT).show()
+                                    carregarNomesVideos()
+                                    onComplete()
+                                }
+                        }
+                }
+            }
+        }.addOnFailureListener { e ->
+            Toast.makeText(this, "Erro ao enviar vídeo: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Apenas renomeia vídeo existente
+    private fun renomearVideo(nomeAtual: String, novoNome: String, onComplete: () -> Unit) {
+        val userId = auth.currentUser?.uid ?: return
+        val storageRefOld = storage.reference.child("arquivos/$userId/videosPrivados/$nomeAtual")
+        val storageRefNew = storage.reference.child("arquivos/$userId/videosPrivados/$novoNome")
+
+        storageRefOld.getBytes(Long.MAX_VALUE).addOnSuccessListener { bytes ->
+            storageRefNew.putBytes(bytes).addOnSuccessListener {
+                storageRefNew.downloadUrl.addOnSuccessListener { downloadUri ->
+                    storageRefOld.delete().addOnCompleteListener { task ->
+                        if (!task.isSuccessful) {
+                            Toast.makeText(this, "Erro ao apagar vídeo antigo: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                            return@addOnCompleteListener
+                        }
+
+                        // Atualiza Firestore
+                        firestore.collection("users")
+                            .document(userId)
+                            .collection("videos")
+                            .document(nomeAtual.removeSuffix(".mp4"))
+                            .delete()
+                            .addOnSuccessListener {
+                                firestore.collection("users")
+                                    .document(userId)
+                                    .collection("videos")
+                                    .document(novoNome.removeSuffix(".mp4"))
+                                    .set(
+                                        VideoDataClass(
+                                            nomeVideo = novoNome.removeSuffix(".mp4"),
+                                            visualizacao = "privado",
+                                            url = downloadUri.toString(),
+                                            userId = userId
+                                        )
+                                    ).addOnSuccessListener {
+                                        Toast.makeText(this, "Vídeo renomeado com sucesso!", Toast.LENGTH_SHORT).show()
+                                        carregarNomesVideos()
+                                        onComplete()
+                                    }
+                            }
+                    }
+                }
+            }
+        }.addOnFailureListener { e ->
+            Toast.makeText(this, "Erro ao ler vídeo antigo: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun excluirVideo(nome: String) {
