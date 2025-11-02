@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.espanholgenialstorageandroid.R
 import com.example.espanholgenialstorageandroid.adapter.PrivatePhotoAdapter
 import com.example.espanholgenialstorageandroid.fragment.VisualizarImagemPrivadaDialogFragment
+import com.example.espanholgenialstorageandroid.model.ImageDataClass
 import com.example.espanholgenialstorageandroid.strategy.SanitizeFileNameInterface
 import com.example.espanholgenialstorageandroid.strategy.SanitizeFileNameStrategy
 import com.google.firebase.FirebaseApp
@@ -71,7 +72,7 @@ class ListarFotoPrivadasAcitivity : BaseDrawerActivity()
             onVisualizar = { nome -> visualizarImagem(nome) },
             onEditar = { nome -> editarImagem(nome) },
             onExcluir = { nome -> excluirImagem(nome) },
-            onTornarPublico = { nome -> tornarImagemPublica(nome) }
+            onTornarPublico = { nome -> tornarImagemPublica(nome) { carregarNomesImagens() } }
         )
         recyclerView.adapter = adapter
 
@@ -312,7 +313,48 @@ class ListarFotoPrivadasAcitivity : BaseDrawerActivity()
             }
     }
 
-    private fun tornarImagemPublica(nome: String) {
-        Toast.makeText(this, "Tornar público: $nome", Toast.LENGTH_SHORT).show()
+    private fun tornarImagemPublica(nome: String, onComplete: () -> Unit) {
+        val userId = auth.currentUser?.uid ?: return
+        val storageRefPrivada = storage.reference.child("arquivos/$userId/imagensPrivadas/$nome")
+        val storageRefPublica = storage.reference.child("arquivos/$userId/imagensPublicas/$nome")
+
+        // Pega os bytes da imagem privada
+        storageRefPrivada.getBytes(Long.MAX_VALUE).addOnSuccessListener { bytes ->
+            // Sobe para a pasta pública
+            storageRefPublica.putBytes(bytes).addOnSuccessListener {
+                // Apaga a imagem da pasta privada
+                storageRefPrivada.delete().addOnSuccessListener {
+                    // Atualiza o Firestore, apenas o campo "visualizacao"
+                    firestore.collection("users")
+                        .document(userId)
+                        .collection("imagens")
+                        .document(nome.removeSuffix(".jpg"))
+                        .update("visualizacao", "publica")
+                        .addOnSuccessListener {
+                            // Atualiza lista da RecyclerView
+                            listaImagens.clear()              // limpa a lista
+                            carregarNomesImagens()            // recarrega do Storage
+
+                            Toast.makeText(this, "Imagem movida para pública!", Toast.LENGTH_SHORT).show()
+
+                            // Callback para Activity
+                            onComplete()
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(this, "Erro ao atualizar Firestore: ${e.message}", Toast.LENGTH_SHORT).show()
+                            onComplete()
+                        }
+                }.addOnFailureListener { e ->
+                    Toast.makeText(this, "Erro ao apagar imagem privada: ${e.message}", Toast.LENGTH_SHORT).show()
+                    onComplete()
+                }
+            }.addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao enviar para pasta pública: ${e.message}", Toast.LENGTH_SHORT).show()
+                onComplete()
+            }
+        }.addOnFailureListener { e ->
+            Toast.makeText(this, "Erro ao ler imagem privada: ${e.message}", Toast.LENGTH_SHORT).show()
+            onComplete()
+        }
     }
 }
