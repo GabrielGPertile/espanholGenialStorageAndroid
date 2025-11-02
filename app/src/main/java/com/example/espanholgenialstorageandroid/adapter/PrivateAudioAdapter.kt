@@ -19,7 +19,7 @@ class PrivateAudioAdapter(
 {
     class AudioViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
-        val textViewNome: TextView = itemView.findViewById(R.id.textViewNomeVideo)
+        val textViewNome: TextView = itemView.findViewById(R.id.textViewNomeAudio)
         val btnVisualizar: ImageButton = itemView.findViewById(R.id.btnVisualizar)
         val btnEditar: ImageButton = itemView.findViewById(R.id.btnEditar)
         val btnExcluir: ImageButton = itemView.findViewById(R.id.btnExcluir)
