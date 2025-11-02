@@ -61,7 +61,7 @@ class ListarFotoPublicasAcitivity : BaseDrawerActivity() {
     private fun carregarNomesImagens() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val storageRef =
-            storage.reference.child("arquivos/$userId/imagensPrivadas/") // pasta no Storage
+            storage.reference.child("arquivos/$userId/imagensPublicas/") // pasta no Storage
 
         storageRef.listAll()
             .addOnSuccessListener { lista ->
