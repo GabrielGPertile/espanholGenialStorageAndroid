@@ -17,7 +17,7 @@ class PrivateVideoAdapter(
 ): RecyclerView.Adapter<PrivateVideoAdapter.VideoViewHolder>()
 {
     class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textViewNome: TextView = itemView.findViewById(R.id.textViewNomeImagem)
+        val textViewNome: TextView = itemView.findViewById(R.id.textViewNomeVideo)
         val btnVisualizar: ImageButton = itemView.findViewById(R.id.btnVisualizar)
         val btnEditar: ImageButton = itemView.findViewById(R.id.btnEditar)
         val btnExcluir: ImageButton = itemView.findViewById(R.id.btnExcluir)
