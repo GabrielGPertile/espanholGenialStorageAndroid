@@ -46,6 +46,7 @@ abstract class BaseDrawerActivity : AppCompatActivity()
                 }
                 R.id.menu_dashboard_principal -> { navigateToMainDashboard() }
                 R.id.menu_dashboard_meusAudiosPrivados -> { navigateToMainPrivateAudioList() }
+                R.id.menu_dashboard_meusAudiosPublicos -> { navigateToMainPublicAudioList() }
                 R.id.menu_dashboard_meusVideosPrivados -> {}
                 R.id.menu_dashboard_minhasFotosPrivadas -> { navigateToMainPrivatePhotoList() }
                 R.id.menu_dashboard_minhasFotosPublicas -> { navigateToMainPublicPhotoList() }
@@ -87,6 +88,12 @@ abstract class BaseDrawerActivity : AppCompatActivity()
     private fun navigateToMainPrivateAudioList()
     {
         val intent = Intent(this, ListarAudioPrivadosAcitivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun navigateToMainPublicAudioList()
+    {
+        val intent = Intent(this, ListarAudioPublicosAcitivity::class.java)
         startActivity(intent)
     }
 
