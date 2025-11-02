@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.espanholgenialstorageandroid.R
 import com.example.espanholgenialstorageandroid.adapter.PublicAudioAdapter
-import com.example.espanholgenialstorageandroid.strategy.SanitizeFileNameInterface
-import com.example.espanholgenialstorageandroid.strategy.SanitizeFileNameStrategy
+import com.example.espanholgenialstorageandroid.fragment.VisualizarAudioPrivadoDialogFragment
+import com.example.espanholgenialstorageandroid.fragment.VisualizarAudioPublicoDialogFragment
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -26,7 +26,6 @@ class ListarAudioPublicosAcitivity: BaseDrawerActivity()
     private lateinit var auth: FirebaseAuth
     private lateinit var storage: FirebaseStorage
     private lateinit var firestore: FirebaseFirestore
-    private val sanitizer: SanitizeFileNameInterface = SanitizeFileNameStrategy()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,6 +87,25 @@ class ListarAudioPublicosAcitivity: BaseDrawerActivity()
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Erro ao carregar: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun visualizarAudio(nome: String) {
+        val userId = auth.currentUser?.uid ?: return
+        val storageRef = storage.reference.child("arquivos/$userId/audiosPublicos/$nome")
+
+        storageRef.downloadUrl
+            .addOnSuccessListener { uri ->
+                // Abre o DialogFragment para reproduzir o áudio
+                val fragment = VisualizarAudioPublicoDialogFragment.newInstance(
+                    audioUrl = uri.toString(),
+                    campoInformativo = "Nome do áudio:",
+                    nomeAudio = nome
+                )
+                fragment.show(supportFragmentManager, "visualizarAudio")
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao carregar áudio: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 }
