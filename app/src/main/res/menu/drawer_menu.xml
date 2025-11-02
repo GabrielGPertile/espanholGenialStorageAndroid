@@ -17,7 +17,7 @@
 
     <item
         android:id="@+id/menu_dashboard_meusAudiosPublicos"
-        android:title="Minhas audios públicos" />
+        android:title="Meus audios públicos" />
 
     <item
         android:id="@+id/menu_dashboard_meusVideosPrivados"
