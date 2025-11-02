@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.espanholgenialstorageandroid.R
 import com.example.espanholgenialstorageandroid.adapter.PrivateAudioAdapter
 import com.example.espanholgenialstorageandroid.adapter.PrivateVideoAdapter
+import com.example.espanholgenialstorageandroid.fragment.VisualizarVideoPrivadoDialogFragment
 import com.example.espanholgenialstorageandroid.strategy.SanitizeFileNameInterface
 import com.example.espanholgenialstorageandroid.strategy.SanitizeFileNameStrategy
 import com.google.firebase.FirebaseApp
@@ -94,8 +95,24 @@ class ListarVideoPrivadosAcitivity : BaseDrawerActivity()
     }
 
     private fun visualizarVideo(nome: String) {
-        Toast.makeText(this, "Visualizar: $nome", Toast.LENGTH_SHORT).show()
+        val userId = auth.currentUser?.uid ?: return
+        val storageRef = storage.reference.child("arquivos/$userId/videosPrivados/$nome")
+
+        storageRef.downloadUrl
+            .addOnSuccessListener { uri ->
+                // Cria o dialog fragment passando a URL do vídeo e o nome
+                val fragment = VisualizarVideoPrivadoDialogFragment.newInstance(
+                    videoUrl = uri.toString(),
+                    campoInformativo = "Nome do áudio:",
+                    nomeVideo = nome
+                )
+                fragment.show(supportFragmentManager, "visualizarVideoPrivado")
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao carregar vídeo: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
+
 
     private fun editarVideo(nome: String) {
         Toast.makeText(this, "Editar: $nome", Toast.LENGTH_SHORT).show()
