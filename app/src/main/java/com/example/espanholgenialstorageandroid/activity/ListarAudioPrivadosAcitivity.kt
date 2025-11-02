@@ -2,14 +2,17 @@ package com.example.espanholgenialstorageandroid.activity
 
 import android.net.Uri
 import android.os.Bundle
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.espanholgenialstorageandroid.R
 import com.example.espanholgenialstorageandroid.adapter.PrivateAudioAdapter
-import com.example.espanholgenialstorageandroid.adapter.PrivatePhotoAdapter
+import com.example.espanholgenialstorageandroid.strategy.SanitizeFileNameInterface
+import com.example.espanholgenialstorageandroid.strategy.SanitizeFileNameStrategy
 import com.example.espanholgenialstorageandroid.fragment.VisualizarAudioPrivadoDialogFragment
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
@@ -26,6 +29,7 @@ class ListarAudioPrivadosAcitivity : BaseDrawerActivity()
     private lateinit var auth: FirebaseAuth
     private lateinit var storage: FirebaseStorage
     private lateinit var firestore: FirebaseFirestore
+    private val sanitizer: SanitizeFileNameInterface = SanitizeFileNameStrategy()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +69,7 @@ class ListarAudioPrivadosAcitivity : BaseDrawerActivity()
         adapter = PrivateAudioAdapter(
             listaAudios,
             onVisualizar = { nome -> visualizarAudio(nome) },
-            onEditar = { nome -> editarImagem(nome) },
+            onEditar = { nome -> editarAudio(nome) },
             onExcluir = { nome -> excluirImagem(nome) },
             onTornarPublico = { nome -> tornarImagemPublica(nome) { carregarNomesAudios()} }
         )
@@ -110,8 +114,116 @@ class ListarAudioPrivadosAcitivity : BaseDrawerActivity()
             }
     }
 
-    private fun editarImagem(nome: String) {
-        Toast.makeText(this, "Editar: $nome", Toast.LENGTH_SHORT).show()
+    private fun editarAudio(nomeAtual: String) {
+        val editText = EditText(this).apply { setText(nomeAtual.removeSuffix(".mp3")) }
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Editar nome do áudio")
+            .setView(editText)
+            .setPositiveButton("Salvar", null)
+            .setNeutralButton("Selecionar novo áudio", null)
+            .setNegativeButton("Cancelar", null)
+            .create()
+
+        dialog.show()
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            val novoNomeInput = editText.text.toString().trim()
+            if (novoNomeInput.isEmpty()) {
+                Toast.makeText(this, "O nome não pode ser vazio", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val regexSemEspacos = Regex("\\s")
+            if (regexSemEspacos.containsMatchIn(novoNomeInput)) {
+                Toast.makeText(this, "O nome não pode conter espaços", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // 🔹 Sanitiza o nome completo
+            val nomeSanitizado: String? = try {
+                sanitizer.sanitizeFileName(novoNomeInput)
+            } catch (e: IllegalArgumentException) {
+                Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (nomeSanitizado == null) {
+                Toast.makeText(this, "Erro ao sanitizar nome", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // 🔹 Se o nome mudou, renomeia
+            val novoNomeFinal = "$novoNomeInput.mp3"
+
+            if (audioSelecionadaUri != null) {
+                // Substitui pelo novo áudio selecionado
+                substituirAudio(nomeAtual, novoNomeFinal, audioSelecionadaUri!!) {
+                    dialog.dismiss()
+                }
+            } else if (novoNomeFinal != nomeAtual) {
+                // Apenas renomeia no Storage/Firestore
+                renomearAudio(nomeAtual, novoNomeFinal) {
+                    dialog.dismiss()
+                }
+            } else {
+                Toast.makeText(this, "Nada foi alterado", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener {
+            selecionarAudioLauncher.launch("audio/*")
+        }
+    }
+
+    private fun substituirAudio(nomeAtual: String, novoNome: String, uri: Uri, onComplete: () -> Unit) {
+        val userId = auth.currentUser?.uid ?: return
+        val storageRef = storage.reference.child("arquivos/$userId/audiosPrivados/$novoNome")
+
+        storageRef.putFile(uri).addOnSuccessListener {
+            // Apaga o antigo
+            storage.reference.child("arquivos/$userId/audiosPrivados/$nomeAtual").delete()
+            // Atualiza Firestore
+            firestore.collection("users")
+                .document(userId)
+                .collection("audios")
+                .document(nomeAtual.removeSuffix(".mp3"))
+                .delete()
+            firestore.collection("users")
+                .document(userId)
+                .collection("audios")
+                .document(novoNome.removeSuffix(".mp3"))
+                .set(mapOf("visualizacao" to "privado"))
+            listaAudios.clear()
+            carregarNomesAudios()
+            onComplete()
+        }
+    }
+
+    private fun renomearAudio(nomeAtual: String, novoNome: String, onComplete: () -> Unit) {
+        val userId = auth.currentUser?.uid ?: return
+        val storageRefOld = storage.reference.child("arquivos/$userId/audiosPrivados/$nomeAtual")
+        val storageRefNew = storage.reference.child("arquivos/$userId/audiosPrivados/$novoNome")
+
+        // Copia bytes do antigo
+        storageRefOld.getBytes(Long.MAX_VALUE).addOnSuccessListener { bytes ->
+            storageRefNew.putBytes(bytes).addOnSuccessListener {
+                storageRefOld.delete()
+                firestore.collection("users")
+                    .document(userId)
+                    .collection("audios")
+                    .document(nomeAtual.removeSuffix(".mp3"))
+                    .delete()
+                firestore.collection("users")
+                    .document(userId)
+                    .collection("audios")
+                    .document(novoNome.removeSuffix(".mp3"))
+                    .set(mapOf("visualizacao" to "privado"))
+                listaAudios.clear()
+                carregarNomesAudios()
+                onComplete()
+            }
+        }
     }
 
     private fun excluirImagem(nome: String) {
