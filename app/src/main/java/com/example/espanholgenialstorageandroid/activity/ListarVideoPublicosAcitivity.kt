@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.espanholgenialstorageandroid.R
 import com.example.espanholgenialstorageandroid.adapter.PrivateVideoAdapter
 import com.example.espanholgenialstorageandroid.adapter.PublicVideoAdapter
+import com.example.espanholgenialstorageandroid.fragment.VisualizarVideoPrivadoDialogFragment
+import com.example.espanholgenialstorageandroid.fragment.VisualizarVideoPublicDialogFragment
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -61,7 +63,7 @@ class ListarVideoPublicosAcitivity : BaseDrawerActivity()
 
         recyclerView = findViewById(R.id.recyclerViewAudios)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = PrivateVideoAdapter(
+        adapter = PublicVideoAdapter(
             listaVideos,
             onVisualizar = { nome -> visualizarVideo(nome) },
             onExcluir = { nome ->  excluirVideo(nome) },
@@ -86,6 +88,25 @@ class ListarVideoPublicosAcitivity : BaseDrawerActivity()
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Erro ao carregar: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun visualizarVideo(nome: String) {
+        val userId = auth.currentUser?.uid ?: return
+        val storageRef = storage.reference.child("arquivos/$userId/videosPrivados/$nome")
+
+        storageRef.downloadUrl
+            .addOnSuccessListener { uri ->
+                // Cria o dialog fragment passando a URL do vídeo e o nome
+                val fragment = VisualizarVideoPublicDialogFragment.newInstance(
+                    videoUrl = uri.toString(),
+                    campoInformativo = "Nome do áudio:",
+                    nomeVideo = nome
+                )
+                fragment.show(supportFragmentManager, "visualizarVideoPrivado")
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao carregar vídeo: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 }
