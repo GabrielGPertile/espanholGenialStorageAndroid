@@ -125,7 +125,16 @@
 
         </activity>
 
+        <!-- Configuração do ListarAudiosPrivadosAcitivity -->
+        <activity
+            android:name=".activity.ListarAudioPrivadosAcitivity"
+            android:exported="true">
 
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+
+        </activity>
     </application>
 
 </manifest>
