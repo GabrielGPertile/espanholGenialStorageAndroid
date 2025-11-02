@@ -135,6 +135,17 @@
             </intent-filter>
 
         </activity>
+
+        <!-- Configuração do ListarAudioPublicosAcitivity -->
+        <activity
+            android:name=".activity.ListarAudioPublicosAcitivity"
+            android:exported="true">
+
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+
+        </activity>
     </application>
 
 </manifest>
