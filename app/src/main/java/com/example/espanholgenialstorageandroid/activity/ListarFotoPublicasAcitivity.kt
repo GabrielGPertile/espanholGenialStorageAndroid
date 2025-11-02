@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.espanholgenialstorageandroid.R
 import com.example.espanholgenialstorageandroid.adapter.PrivatePhotoAdapter
 import com.example.espanholgenialstorageandroid.adapter.PublicPhotoAdapter
+import com.example.espanholgenialstorageandroid.fragment.VisualizarImagemPrivadaDialogFragment
+import com.example.espanholgenialstorageandroid.fragment.VisualizarImagemPublicDialogFragment
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -76,7 +78,22 @@ class ListarFotoPublicasAcitivity : BaseDrawerActivity() {
     }
 
     private fun visualizarImagem(nome: String) {
-        Toast.makeText(this, "Visualizar: $nome", Toast.LENGTH_SHORT).show()
+        val userId = auth.currentUser?.uid ?: return
+        val storageRef = storage.reference.child("arquivos/$userId/imagensPublicas/$nome")
+
+        storageRef.downloadUrl
+            .addOnSuccessListener { uri ->
+                // Agora sim passamos a URL para o fragment
+                val fragment = VisualizarImagemPublicDialogFragment.newInstance(
+                    imageUrl = uri.toString(),
+                    campoTexto = nome,               // campo informativo
+                    imageNameFirebase = nome         // nome salvo no Firebase
+                )
+                fragment.show(supportFragmentManager, "visualizarImagem")
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao carregar imagem: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun excluirImagem(nome: String) {
@@ -135,7 +152,7 @@ class ListarFotoPublicasAcitivity : BaseDrawerActivity() {
                             listaImagens.clear()              // limpa a lista
                             carregarNomesImagens()            // recarrega do Storage
 
-                            Toast.makeText(this, "Imagem movida para pública!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Imagem movida para privada!", Toast.LENGTH_SHORT).show()
 
                             // Callback para Activity
                             onComplete()
@@ -145,15 +162,15 @@ class ListarFotoPublicasAcitivity : BaseDrawerActivity() {
                             onComplete()
                         }
                 }.addOnFailureListener { e ->
-                    Toast.makeText(this, "Erro ao apagar imagem privada: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Erro ao apagar imagem pública: ${e.message}", Toast.LENGTH_SHORT).show()
                     onComplete()
                 }
             }.addOnFailureListener { e ->
-                Toast.makeText(this, "Erro ao enviar para pasta pública: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Erro ao enviar para pasta privada: ${e.message}", Toast.LENGTH_SHORT).show()
                 onComplete()
             }
         }.addOnFailureListener { e ->
-            Toast.makeText(this, "Erro ao ler imagem privada: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Erro ao ler imagem pública: ${e.message}", Toast.LENGTH_SHORT).show()
             onComplete()
         }
     }
