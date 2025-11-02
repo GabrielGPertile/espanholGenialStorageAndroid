@@ -77,7 +77,7 @@ class ListarVideoPublicosAcitivity : BaseDrawerActivity()
     private fun carregarNomesVideos()
     {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val storageRef = storage.reference.child("arquivos/$userId/videosPrivados/") // pasta no Storage
+        val storageRef = storage.reference.child("arquivos/$userId/videosPublicos/") // pasta no Storage
 
         storageRef.listAll()
             .addOnSuccessListener { lista ->
@@ -93,7 +93,7 @@ class ListarVideoPublicosAcitivity : BaseDrawerActivity()
 
     private fun visualizarVideo(nome: String) {
         val userId = auth.currentUser?.uid ?: return
-        val storageRef = storage.reference.child("arquivos/$userId/videosPrivados/$nome")
+        val storageRef = storage.reference.child("arquivos/$userId/videosPublicos/$nome")
 
         storageRef.downloadUrl
             .addOnSuccessListener { uri ->
@@ -103,10 +103,43 @@ class ListarVideoPublicosAcitivity : BaseDrawerActivity()
                     campoInformativo = "Nome do áudio:",
                     nomeVideo = nome
                 )
-                fragment.show(supportFragmentManager, "visualizarVideoPrivado")
+                fragment.show(supportFragmentManager, "visualizarVideoPublico")
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Erro ao carregar vídeo: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun excluirVideo(nome: String) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val storageRef = storage.reference.child("arquivos/$userId/videosPublicos/$nome")
+
+        // Remove do Storage
+        storageRef.delete()
+            .addOnSuccessListener {
+                // Remove também do Firestore
+                val firestore = FirebaseFirestore.getInstance()
+
+                val nomeSemExtensao = nome.removeSuffix(".mp4")
+
+                firestore.collection("users")
+                    .document(userId)
+                    .collection("videos")
+                    .document(nomeSemExtensao)
+                    .delete()
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Vídeo excluído com sucesso!", Toast.LENGTH_SHORT).show()
+
+                        // Remove da lista da RecyclerView
+                        listaVideos.remove(nome)
+                        adapter.notifyDataSetChanged()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(this, "Erro ao excluir do Firestore: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao excluir do Storage: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 }
