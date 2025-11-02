@@ -8,9 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.espanholgenialstorageandroid.R
-import com.example.espanholgenialstorageandroid.adapter.PrivateVideoAdapter
 import com.example.espanholgenialstorageandroid.adapter.PublicVideoAdapter
-import com.example.espanholgenialstorageandroid.fragment.VisualizarVideoPrivadoDialogFragment
 import com.example.espanholgenialstorageandroid.fragment.VisualizarVideoPublicDialogFragment
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
@@ -30,7 +28,7 @@ class ListarVideoPublicosAcitivity : BaseDrawerActivity()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.listar_audios_privados)
+        setContentView(R.layout.listar_videos_publicos)
 
         // Configura o launcher
         selecionarVideoLauncher = registerForActivityResult(
@@ -61,13 +59,13 @@ class ListarVideoPublicosAcitivity : BaseDrawerActivity()
 
         loadProfilePhotoInDrawer()
 
-        recyclerView = findViewById(R.id.recyclerViewAudios)
+        recyclerView = findViewById(R.id.recyclerViewVideos)
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = PublicVideoAdapter(
             listaVideos,
             onVisualizar = { nome -> visualizarVideo(nome) },
             onExcluir = { nome ->  excluirVideo(nome) },
-            onTornarPublico = { nome ->  tornarVideoPublico(nome) { carregarNomesVideos()}  }
+            onTornarPrivado = { nome ->  onTornarPrivado(nome) { carregarNomesVideos()}  }
         )
         recyclerView.adapter = adapter
 
@@ -141,5 +139,50 @@ class ListarVideoPublicosAcitivity : BaseDrawerActivity()
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Erro ao excluir do Storage: ${e.message}", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun onTornarPrivado(nome: String, onComplete: () -> Unit) {
+        val userId = auth.currentUser?.uid ?: return
+        val storageRefPrivada = storage.reference.child("arquivos/$userId/videosPrivados/$nome")
+        val storageRefPublica = storage.reference.child("arquivos/$userId/videosPublicos/$nome")
+
+        // Pega os bytes da imagem privada
+        storageRefPublica.getBytes(Long.MAX_VALUE).addOnSuccessListener { bytes ->
+            // Sobe para a pasta pública
+            storageRefPrivada.putBytes(bytes).addOnSuccessListener {
+                // Apaga a imagem da pasta privada
+                storageRefPublica.delete().addOnSuccessListener {
+                    // Atualiza o Firestore, apenas o campo "visualizacao"
+                    firestore.collection("users")
+                        .document(userId)
+                        .collection("videos")
+                        .document(nome.removeSuffix(".mp4"))
+                        .update("visualizacao", "privado")
+                        .addOnSuccessListener {
+                            // Atualiza lista da RecyclerView
+                            listaVideos.clear()              // limpa a lista
+                            carregarNomesVideos()            // recarrega do Storage
+
+                            Toast.makeText(this, "Vídeo movido para privado!", Toast.LENGTH_SHORT).show()
+
+                            // Callback para Activity
+                            onComplete()
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(this, "Erro ao atualizar Firestore: ${e.message}", Toast.LENGTH_SHORT).show()
+                            onComplete()
+                        }
+                }.addOnFailureListener { e ->
+                    Toast.makeText(this, "Erro ao apagar vídeo publico: ${e.message}", Toast.LENGTH_SHORT).show()
+                    onComplete()
+                }
+            }.addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao enviar para pasta privada: ${e.message}", Toast.LENGTH_SHORT).show()
+                onComplete()
+            }
+        }.addOnFailureListener { e ->
+            Toast.makeText(this, "Erro ao ler vídeo público: ${e.message}", Toast.LENGTH_SHORT).show()
+            onComplete()
+        }
     }
 }
