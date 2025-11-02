@@ -73,4 +73,21 @@ class ListarAudioPublicosAcitivity: BaseDrawerActivity()
 
         carregarNomesAudios()
     }
+
+    private fun carregarNomesAudios()
+    {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val storageRef = storage.reference.child("arquivos/$userId/audiosPublicos/") // pasta no Storage
+
+        storageRef.listAll()
+            .addOnSuccessListener { lista ->
+                for (item in lista.items) {
+                    listaAudios.add(item.name) // pega só o nome do arquivo
+                }
+                adapter.notifyDataSetChanged()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao carregar: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
 }
