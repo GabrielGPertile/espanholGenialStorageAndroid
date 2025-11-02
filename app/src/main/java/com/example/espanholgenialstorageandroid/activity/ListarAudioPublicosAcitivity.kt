@@ -108,4 +108,38 @@ class ListarAudioPublicosAcitivity: BaseDrawerActivity()
                 Toast.makeText(this, "Erro ao carregar áudio: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
+    private fun excluirAudio(nome: String) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val storageRef = storage.reference.child("arquivos/$userId/audiosPublicos/$nome")
+
+        // Remove do Storage
+        storageRef.delete()
+            .addOnSuccessListener {
+                // Remove também do Firestore
+                val firestore = FirebaseFirestore.getInstance()
+
+                // nomeImagem vem no formato "NomePt_NomeEs.jpg"
+                val nomeSemExtensao = nome.removeSuffix(".jpg")
+
+                firestore.collection("users")
+                    .document(userId)
+                    .collection("audios")
+                    .document(nomeSemExtensao)
+                    .delete()
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Imagem excluída com sucesso!", Toast.LENGTH_SHORT).show()
+
+                        // Remove da lista da RecyclerView
+                        listaAudios.remove(nome)
+                        adapter.notifyDataSetChanged()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(this, "Erro ao excluir do Firestore: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao excluir do Storage: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
 }
