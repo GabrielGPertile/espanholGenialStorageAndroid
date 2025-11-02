@@ -73,6 +73,16 @@ class VisualizarVideoPrivadoDialogFragment : DialogFragment()
         videoView?.setMediaController(mediaController)
         videoView?.setVideoURI(Uri.parse(videoUrl))
 
+        // Configura URI do vídeo
+        videoUrl?.let { url ->
+            videoView?.setVideoURI(Uri.parse(url))
+            videoView?.requestFocus() // necessário para exibir os frames
+            videoView?.setOnPreparedListener { mp ->
+                mp.isLooping = false // não repetir
+                videoView?.start()   // mostra o vídeo imediatamente
+            }
+        }
+
         btnPlay.setOnClickListener {
             videoView?.start()
         }
@@ -83,7 +93,8 @@ class VisualizarVideoPrivadoDialogFragment : DialogFragment()
 
         btnStop.setOnClickListener {
             videoView?.stopPlayback()
-            videoView?.setVideoURI(Uri.parse(videoUrl)) // reinicia
+            videoUrl?.let { videoView?.setVideoURI(Uri.parse(it)) } // reinicia
+            videoView?.requestFocus()
         }
     }
 
