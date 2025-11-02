@@ -216,6 +216,7 @@ class CreatePhotoStorageActivity : BaseDrawerActivity() {
                     val imageDataClass = ImageDataClass(
                         nomePt = nomePtCapitalizado,
                         nomeEs = nomeEsCapitalizado,
+                        visualizacao = "privado",
                         url = uri.toString(),
                         userId = userId
                     )
