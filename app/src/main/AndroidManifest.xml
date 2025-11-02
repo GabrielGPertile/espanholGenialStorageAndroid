@@ -157,6 +157,17 @@
             </intent-filter>
 
         </activity>
+
+        <!-- Configuração do ListarVideoPublicosAcitivity -->
+        <activity
+            android:name=".activity.ListarVideoPublicosAcitivity"
+            android:exported="true">
+
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+
+        </activity>
     </application>
 
 </manifest>
