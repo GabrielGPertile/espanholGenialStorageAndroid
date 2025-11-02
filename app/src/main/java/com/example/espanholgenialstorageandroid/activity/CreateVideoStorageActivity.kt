@@ -139,6 +139,7 @@ class CreateVideoStorageActivity : BaseDrawerActivity() {
                 videoRef.downloadUrl.addOnSuccessListener { downloadUri ->
                     val videoData = VideoDataClass(
                         nomeVideo = sanitizedFileName,
+                        visualizacao = "publico",
                         url = downloadUri.toString(),
                         userId = userId
                     )
