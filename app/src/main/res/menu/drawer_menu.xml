@@ -17,9 +17,14 @@
     <item
         android:id="@+id/menu_dashboard_meusVideosPrivados"
         android:title="Meus vídeos privados" />
+
     <item
         android:id="@+id/menu_dashboard_minhasFotosPrivadas"
         android:title="Minhas fotos privadas" />
+
+    <item
+        android:id="@+id/menu_dashboard_minhasFotosPublicas"
+        android:title="Minhas fotos públicas" />
 
     <item
         android:id="@+id/menu_SobreNos"
