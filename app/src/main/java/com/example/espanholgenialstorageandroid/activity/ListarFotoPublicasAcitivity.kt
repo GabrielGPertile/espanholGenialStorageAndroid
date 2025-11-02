@@ -26,8 +26,10 @@ class ListarFotoPublicasAcitivity : BaseDrawerActivity() {
 
         // 🔹 Inicializa as views do Drawer e Toolbar
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
-        val drawerLayout = findViewById<androidx.drawerlayout.widget.DrawerLayout>(R.id.drawer_layout)
-        val navView = findViewById<com.google.android.material.navigation.NavigationView>(R.id.nav_view)
+        val drawerLayout =
+            findViewById<androidx.drawerlayout.widget.DrawerLayout>(R.id.drawer_layout)
+        val navView =
+            findViewById<com.google.android.material.navigation.NavigationView>(R.id.nav_view)
 
         //Inicializa o Auth do Firebase
         FirebaseApp.initializeApp(this)
@@ -47,16 +49,19 @@ class ListarFotoPublicasAcitivity : BaseDrawerActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = PublicPhotoAdapter(
             listaImagens,
+            onVisualizar = { nome -> visualizarImagem(nome) },
+            onExcluir = { nome -> excluirImagem(nome) },
+            onTornarPublico = { nome -> tornarImagemPublica(nome) }
         )
         recyclerView.adapter = adapter
 
         carregarNomesImagens()
     }
 
-    private fun carregarNomesImagens()
-    {
+    private fun carregarNomesImagens() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val storageRef = storage.reference.child("arquivos/$userId/imagensPrivadas/") // pasta no Storage
+        val storageRef =
+            storage.reference.child("arquivos/$userId/imagensPrivadas/") // pasta no Storage
 
         storageRef.listAll()
             .addOnSuccessListener { lista ->
@@ -68,5 +73,17 @@ class ListarFotoPublicasAcitivity : BaseDrawerActivity() {
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Erro ao carregar: ${e.message}", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun visualizarImagem(nome: String) {
+        Toast.makeText(this, "Visualizar: $nome", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun excluirImagem(nome: String) {
+        Toast.makeText(this, "Excluir: $nome", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun tornarImagemPublica(nome: String) {
+        Toast.makeText(this, "Tornar público: $nome", Toast.LENGTH_SHORT).show()
     }
 }
