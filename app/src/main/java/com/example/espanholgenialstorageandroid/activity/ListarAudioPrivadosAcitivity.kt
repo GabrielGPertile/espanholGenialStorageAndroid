@@ -70,8 +70,8 @@ class ListarAudioPrivadosAcitivity : BaseDrawerActivity()
             listaAudios,
             onVisualizar = { nome -> visualizarAudio(nome) },
             onEditar = { nome -> editarAudio(nome) },
-            onExcluir = { nome -> excluirImagem(nome) },
-            onTornarPublico = { nome -> tornarImagemPublica(nome) { carregarNomesAudios()} }
+            onExcluir = { nome -> excluirAudio(nome) },
+            onTornarPublico = { nome -> tornarAudioPublico(nome) { carregarNomesAudios()} }
         )
         recyclerView.adapter = adapter
 
@@ -226,7 +226,7 @@ class ListarAudioPrivadosAcitivity : BaseDrawerActivity()
         }
     }
 
-    private fun excluirImagem(nome: String) {
+    private fun excluirAudio(nome: String) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val storageRef = storage.reference.child("arquivos/$userId/audiosPrivados/$nome")
 
@@ -260,7 +260,7 @@ class ListarAudioPrivadosAcitivity : BaseDrawerActivity()
             }
     }
 
-    private fun tornarImagemPublica(nome: String, onComplete: () -> Unit) {
+    private fun tornarAudioPublico(nome: String, onComplete: () -> Unit) {
         val userId = auth.currentUser?.uid ?: return
         val storageRefPrivada = storage.reference.child("arquivos/$userId/audiosPrivados/$nome")
         val storageRefPublica = storage.reference.child("arquivos/$userId/audiosPublicos/$nome")
