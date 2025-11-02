@@ -48,6 +48,7 @@ abstract class BaseDrawerActivity : AppCompatActivity()
                 R.id.menu_dashboard_meusAudiosPrivados -> { navigateToMainPrivateAudioList() }
                 R.id.menu_dashboard_meusAudiosPublicos -> { navigateToMainPublicAudioList() }
                 R.id.menu_dashboard_meusVideosPrivados -> { navigateToMainPrivateVideoList() }
+                R.id.menu_dashboard_meusVideosPublicos -> { navigateToMainPublicVideoList() }
                 R.id.menu_dashboard_minhasFotosPrivadas -> { navigateToMainPrivatePhotoList() }
                 R.id.menu_dashboard_minhasFotosPublicas -> { navigateToMainPublicPhotoList() }
                 R.id.menu_SobreNos -> {}
@@ -100,6 +101,12 @@ abstract class BaseDrawerActivity : AppCompatActivity()
     private fun navigateToMainPrivateVideoList()
     {
         val intent = Intent(this, ListarVideoPrivadosAcitivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun navigateToMainPublicVideoList()
+    {
+        val intent = Intent(this, ListarVideoPublicosAcitivity::class.java)
         startActivity(intent)
     }
 
