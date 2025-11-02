@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.espanholgenialstorageandroid.R
 import com.example.espanholgenialstorageandroid.adapter.PrivateAudioAdapter
 import com.example.espanholgenialstorageandroid.adapter.PrivatePhotoAdapter
+import com.example.espanholgenialstorageandroid.fragment.VisualizarAudioPrivadoDialogFragment
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -63,7 +64,7 @@ class ListarAudioPrivadosAcitivity : BaseDrawerActivity()
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = PrivateAudioAdapter(
             listaAudios,
-            onVisualizar = { nome -> visualizarImagem(nome) },
+            onVisualizar = { nome -> visualizarAudio(nome) },
             onEditar = { nome -> editarImagem(nome) },
             onExcluir = { nome -> excluirImagem(nome) },
             onTornarPublico = { nome -> tornarImagemPublica(nome) { carregarNomesAudios()} }
@@ -90,8 +91,23 @@ class ListarAudioPrivadosAcitivity : BaseDrawerActivity()
             }
     }
 
-    private fun visualizarImagem(nome: String) {
-        Toast.makeText(this, "Visualizar: $nome", Toast.LENGTH_SHORT).show()
+    private fun visualizarAudio(nome: String) {
+        val userId = auth.currentUser?.uid ?: return
+        val storageRef = storage.reference.child("arquivos/$userId/audiosPrivados/$nome")
+
+        storageRef.downloadUrl
+            .addOnSuccessListener { uri ->
+                // Abre o DialogFragment para reproduzir o áudio
+                val fragment = VisualizarAudioPrivadoDialogFragment.newInstance(
+                    audioUrl = uri.toString(),
+                    campoInformativo = "Nome do áudio:",
+                    nomeAudio = nome
+                )
+                fragment.show(supportFragmentManager, "visualizarAudio")
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao carregar áudio: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun editarImagem(nome: String) {
