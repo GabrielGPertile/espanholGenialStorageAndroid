@@ -69,7 +69,7 @@ class ListarVideoPrivadosAcitivity : BaseDrawerActivity()
             onVisualizar = { nome -> visualizarVideo(nome) },
             onEditar = { nome -> editarVideo(nome) },
             onExcluir = { nome ->  excluirVideo(nome) },
-            onTornarPublico = { nome ->  tornarVideoPublico(nome) }
+            onTornarPublico = { nome ->  tornarVideoPublico(nome) { carregarNomesVideos()}  }
         )
         recyclerView.adapter = adapter
 
@@ -134,7 +134,48 @@ class ListarVideoPrivadosAcitivity : BaseDrawerActivity()
             }
     }
 
-    private fun tornarVideoPublico(nome: String) {
-        Toast.makeText(this, "Tornar público: $nome", Toast.LENGTH_SHORT).show()
+    private fun tornarVideoPublico(nome: String, onComplete: () -> Unit) {
+        val userId = auth.currentUser?.uid ?: return
+        val storageRefPrivada = storage.reference.child("arquivos/$userId/videosPrivados/$nome")
+        val storageRefPublica = storage.reference.child("arquivos/$userId/videosPublicos/$nome")
+
+        // Pega os bytes da imagem privada
+        storageRefPrivada.getBytes(Long.MAX_VALUE).addOnSuccessListener { bytes ->
+            // Sobe para a pasta pública
+            storageRefPublica.putBytes(bytes).addOnSuccessListener {
+                // Apaga a imagem da pasta privada
+                storageRefPrivada.delete().addOnSuccessListener {
+                    // Atualiza o Firestore, apenas o campo "visualizacao"
+                    firestore.collection("users")
+                        .document(userId)
+                        .collection("videos")
+                        .document(nome.removeSuffix(".mp4"))
+                        .update("visualizacao", "publico")
+                        .addOnSuccessListener {
+                            // Atualiza lista da RecyclerView
+                            listaVideos.clear()              // limpa a lista
+                            carregarNomesVideos()            // recarrega do Storage
+
+                            Toast.makeText(this, "Vídeo movido para público!", Toast.LENGTH_SHORT).show()
+
+                            // Callback para Activity
+                            onComplete()
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(this, "Erro ao atualizar Firestore: ${e.message}", Toast.LENGTH_SHORT).show()
+                            onComplete()
+                        }
+                }.addOnFailureListener { e ->
+                    Toast.makeText(this, "Erro ao apagar vídeo privado: ${e.message}", Toast.LENGTH_SHORT).show()
+                    onComplete()
+                }
+            }.addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao enviar para pasta pública: ${e.message}", Toast.LENGTH_SHORT).show()
+                onComplete()
+            }
+        }.addOnFailureListener { e ->
+            Toast.makeText(this, "Erro ao ler vídeo privado: ${e.message}", Toast.LENGTH_SHORT).show()
+            onComplete()
+        }
     }
 }
