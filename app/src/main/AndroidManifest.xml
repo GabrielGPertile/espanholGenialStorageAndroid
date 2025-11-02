@@ -146,6 +146,17 @@
             </intent-filter>
 
         </activity>
+
+        <!-- Configuração do ListarVideoPrivadosAcitivity -->
+        <activity
+            android:name=".activity.ListarVideoPrivadosAcitivity"
+            android:exported="true">
+
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+
+        </activity>
     </application>
 
 </manifest>
