@@ -154,6 +154,7 @@ class CreateAudioStorageActivity: BaseDrawerActivity()
                 audioRef.downloadUrl.addOnSuccessListener { downloadUri ->
                     val audioDataClass = AudioDataClass(
                         nomeAudio = sanitizedFileName,
+                        visualizacao = "privado",
                         url = downloadUri.toString(), // agora sim é a URL
                         userId = userId
                     )
