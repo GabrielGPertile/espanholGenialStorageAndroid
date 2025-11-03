@@ -51,7 +51,7 @@ abstract class BaseDrawerActivity : AppCompatActivity()
                 R.id.menu_dashboard_meusVideosPublicos -> { navigateToMainPublicVideoList() }
                 R.id.menu_dashboard_minhasFotosPrivadas -> { navigateToMainPrivatePhotoList() }
                 R.id.menu_dashboard_minhasFotosPublicas -> { navigateToMainPublicPhotoList() }
-                R.id.menu_SobreNos -> {}
+                R.id.menu_SobreNos -> { navigateToMainAboutUs() }
                 R.id.menu_sair -> {
                     deslogFirebase()
                 }
@@ -119,6 +119,12 @@ abstract class BaseDrawerActivity : AppCompatActivity()
     private fun navigateToMainPublicPhotoList()
     {
         val intent = Intent(this, ListarFotoPublicasAcitivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun navigateToMainAboutUs()
+    {
+        val intent = Intent(this, SobreNosActivity::class.java)
         startActivity(intent)
     }
 
