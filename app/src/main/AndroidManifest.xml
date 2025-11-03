@@ -168,6 +168,17 @@
             </intent-filter>
 
         </activity>
+
+        <!-- Configuração do SobreNosActivity -->
+        <activity
+            android:name=".activity.SobreNosActivity"
+            android:exported="true">
+
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+
+        </activity>
     </application>
 
 </manifest>
