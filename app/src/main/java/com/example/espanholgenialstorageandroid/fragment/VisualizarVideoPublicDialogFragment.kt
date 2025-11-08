@@ -8,10 +8,11 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.MediaController
 import android.widget.TextView
-import android.widget.VideoView
 import androidx.fragment.app.DialogFragment
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 import com.example.espanholgenialstorageandroid.R
-import com.example.espanholgenialstorageandroid.fragment.VisualizarVideoPrivadoDialogFragment.Companion
 
 class VisualizarVideoPublicDialogFragment: DialogFragment()
 {
@@ -19,7 +20,8 @@ class VisualizarVideoPublicDialogFragment: DialogFragment()
     private var campoInformativo: String? = null
     private var nomeVideo: String? = null
 
-    private var videoView: VideoView? = null
+    private var player: ExoPlayer? = null
+    private lateinit var playerView: PlayerView
 
     companion object {
         private const val ARG_VIDEO_URL = "video_url"
@@ -58,50 +60,33 @@ class VisualizarVideoPublicDialogFragment: DialogFragment()
         super.onViewCreated(view, savedInstanceState)
 
         val tvNome = view.findViewById<TextView>(R.id.tvNomeVideo)
-        val btnPlay = view.findViewById<Button>(R.id.btnPlay)
-        val btnPause = view.findViewById<Button>(R.id.btnPause)
-        val btnStop = view.findViewById<Button>(R.id.btnStop)
-        videoView = view.findViewById(R.id.videoView)
+        val tvNomeFirebase = view.findViewById<TextView>(R.id.tvNomeVideoFirebase)
+        playerView = view.findViewById(R.id.playerView)
 
         videoUrl = arguments?.getString(ARG_VIDEO_URL)
         campoInformativo = arguments?.getString(ARG_CAMPO_TEXTO)
         nomeVideo = arguments?.getString(ARG_NOME_VIDEO)
 
-        tvNome.text = nomeVideo ?: "Vídeo desconhecido"
+        tvNome.text = "Nome do vídeo:"
+        tvNomeFirebase.text = nomeVideo ?: "Vídeo desconhecido"
 
-        val mediaController = MediaController(requireContext())
-        mediaController.setAnchorView(videoView)
-        videoView?.setMediaController(mediaController)
-        videoView?.setVideoURI(Uri.parse(videoUrl))
+        // Cria o player
+        player = ExoPlayer.Builder(requireContext()).build()
+        playerView.player = player
 
-        // Configura URI do vídeo
+        // Configura o vídeo
         videoUrl?.let { url ->
-            videoView?.setVideoURI(Uri.parse(url))
-            videoView?.requestFocus() // necessário para exibir os frames
-            videoView?.setOnPreparedListener { mp ->
-                mp.isLooping = false // não repetir
-                videoView?.start()   // mostra o vídeo imediatamente
-            }
-        }
-
-        btnPlay.setOnClickListener {
-            videoView?.start()
-        }
-
-        btnPause.setOnClickListener {
-            videoView?.pause()
-        }
-
-        btnStop.setOnClickListener {
-            videoView?.stopPlayback()
-            videoUrl?.let { videoView?.setVideoURI(Uri.parse(it)) } // reinicia
-            videoView?.requestFocus()
+            val mediaItem = MediaItem.fromUri(Uri.parse(url))
+            player?.setMediaItem(mediaItem)
+            player?.prepare()
+            player?.playWhenReady = true
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        videoView?.stopPlayback()
-        videoView = null
+        playerView.player = null
+        player?.release()
+        player = null
     }
 }
