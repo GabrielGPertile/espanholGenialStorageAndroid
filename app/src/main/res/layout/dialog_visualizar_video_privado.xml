@@ -6,6 +6,15 @@
     android:background="@color/white"
     android:padding="20dp">
 
+    <!-- Novo player moderno -->
+    <androidx.media3.ui.PlayerView
+        android:id="@+id/playerView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginBottom="16dp"
+        android:background="@android:color/black"
+        android:keepScreenOn="true" />
+
     <TextView
         android:id="@+id/tvNomeVideo"
         android:layout_width="match_parent"
@@ -16,14 +25,6 @@
         android:gravity="center"
         android:layout_marginBottom="16dp" />
 
-    <!-- Aqui fica o player visual -->
-    <VideoView
-        android:id="@+id/videoView"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginBottom="16dp"
-        android:background="@android:color/black" />
-
     <TextView
         android:id="@+id/tvNomeVideoFirebase"
         android:layout_width="match_parent"
@@ -33,33 +34,4 @@
         android:textStyle="bold"
         android:gravity="center"
         android:layout_marginBottom="16dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:weightSum="3">
-
-        <Button
-            android:id="@+id/btnPlay"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="▶ Play" />
-
-        <Button
-            android:id="@+id/btnPause"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="⏸ Pause" />
-
-        <Button
-            android:id="@+id/btnStop"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="⏹ Stop" />
-    </LinearLayout>
 </LinearLayout>

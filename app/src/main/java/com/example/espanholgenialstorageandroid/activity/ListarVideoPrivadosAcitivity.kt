@@ -35,7 +35,7 @@ class ListarVideoPrivadosAcitivity : BaseDrawerActivity()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.listar_audios_privados)
+        setContentView(R.layout.listar_videos_privados)
 
         // Configura o launcher
         selecionarVideoLauncher = registerForActivityResult(
@@ -66,7 +66,7 @@ class ListarVideoPrivadosAcitivity : BaseDrawerActivity()
 
         loadProfilePhotoInDrawer()
 
-        recyclerView = findViewById(R.id.recyclerViewAudios)
+        recyclerView = findViewById(R.id.recyclerViewVideos)
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = PrivateVideoAdapter(
             listaVideos,
