@@ -122,7 +122,7 @@ class ListarFotoPrivadasAcitivity : BaseDrawerActivity()
         🗑️ — Excluir permanentemente.<br><br>
         [share] — Torna a imagem <b>pública</b> para outras pessoas.<br><br>
 
-        💡 Dica: mantenha nomes simples e sem caracteres especiais ao enviar ou editar vídeos.
+        💡 Dica: mantenha nomes simples e sem caracteres especiais ao enviar ou editar imagens.
     """.trimIndent()
 
         val spannable = SpannableStringBuilder(
