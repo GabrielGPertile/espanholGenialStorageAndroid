@@ -3,18 +3,22 @@ package com.example.espanholgenialstorageandroid.activity
 import android.app.AlertDialog
 import android.net.Uri
 import android.os.Bundle
+import android.text.SpannableStringBuilder
+import android.text.style.ImageSpan
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.espanholgenialstorageandroid.R
 import com.example.espanholgenialstorageandroid.adapter.PrivatePhotoAdapter
 import com.example.espanholgenialstorageandroid.fragment.VisualizarImagemPrivadaDialogFragment
-import com.example.espanholgenialstorageandroid.model.ImageDataClass
 import com.example.espanholgenialstorageandroid.strategy.SanitizeFileNameInterface
 import com.example.espanholgenialstorageandroid.strategy.SanitizeFileNameStrategy
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -27,6 +31,7 @@ class ListarFotoPrivadasAcitivity : BaseDrawerActivity()
     private val listaImagens = mutableListOf<String>()
     private lateinit var selecionarImagemLauncher: ActivityResultLauncher<String>
     private var imagemSelecionadaUri: Uri? = null
+    private lateinit var btnCasoDeUso: FloatingActionButton
     private lateinit var auth: FirebaseAuth
     private lateinit var storage: FirebaseStorage
     private lateinit var firestore: FirebaseFirestore
@@ -35,6 +40,8 @@ class ListarFotoPrivadasAcitivity : BaseDrawerActivity()
     {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.listar_imagens_privadas)
+
+        btnCasoDeUso = findViewById(R.id.btnCasoDeUso)
 
         // Configura o launcher
         selecionarImagemLauncher = registerForActivityResult(
@@ -77,6 +84,10 @@ class ListarFotoPrivadasAcitivity : BaseDrawerActivity()
         recyclerView.adapter = adapter
 
         carregarNomesImagens()
+
+        btnCasoDeUso.setOnClickListener {
+            explicacoes()
+        }
     }
 
     private fun carregarNomesImagens()
@@ -94,6 +105,51 @@ class ListarFotoPrivadasAcitivity : BaseDrawerActivity()
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Erro ao carregar: ${e.message}", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun explicacoes() {
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        builder.setTitle("Caso de Uso - Fotos Privados")
+
+        val html = """
+        🎬 <b>Funcionalidades desta tela:</b><br><br>
+        📂 Aqui são exibidos todos as fotos que você enviou e manteve <b>privadas</b> no seu armazenamento.<br><br>
+
+        Os botões disponíveis em cada vídeo realizam as seguintes ações:<br><br>
+
+        👁️ — Visualizar a imagem.<br><br>
+        ✏️ — Editar ou substituir o arquivo.<br><br>
+        🗑️ — Excluir permanentemente.<br><br>
+        [share] — Torna a imagem <b>pública</b> para outras pessoas.<br><br>
+
+        💡 Dica: mantenha nomes simples e sem caracteres especiais ao enviar ou editar vídeos.
+    """.trimIndent()
+
+        val spannable = SpannableStringBuilder(
+            HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        )
+
+        // substitui o marcador [share] pelo ícone real
+        val start = spannable.indexOf("[share]")
+        if (start != -1) {
+            val end = start + "[share]".length
+            val drawable = getDrawable(android.R.drawable.ic_menu_share)
+            drawable?.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
+            val imageSpan = ImageSpan(drawable!!, ImageSpan.ALIGN_BOTTOM)
+            spannable.replace(start, end, " ")
+            spannable.setSpan(imageSpan, start, start + 1, 0)
+        }
+
+        val textView = TextView(this).apply {
+            text = spannable
+            setPadding(40, 20, 40, 20)
+        }
+
+        builder.setView(textView)
+        builder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
     }
 
     private fun visualizarImagem(nome: String) {
