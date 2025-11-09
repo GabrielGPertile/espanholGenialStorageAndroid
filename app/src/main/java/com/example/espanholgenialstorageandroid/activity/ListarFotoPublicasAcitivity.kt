@@ -152,81 +152,140 @@ class ListarFotoPublicasAcitivity : BaseDrawerActivity() {
     }
 
     private fun excluirImagem(nome: String) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val storageRef = storage.reference.child("arquivos/$userId/imagensPublicas/$nome")
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Excluir imagem")
+        builder.setMessage("Tem certeza que deseja excluir a imagem \"$nome\" permanentemente?")
 
-        // Remove do Storage
-        storageRef.delete()
-            .addOnSuccessListener {
-                // Remove também do Firestore
-                val firestore = FirebaseFirestore.getInstance()
+        builder.setPositiveButton("Sim") { dialog, _ ->
+            dialog.dismiss()
 
-                // nomeImagem vem no formato "NomePt_NomeEs.jpg"
-                val nomeSemExtensao = nome.removeSuffix(".jpg")
+            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@setPositiveButton
+            val storageRef = storage.reference.child("arquivos/$userId/imagensPublicas/$nome")
 
-                firestore.collection("users")
-                    .document(userId)
-                    .collection("imagens")
-                    .document(nomeSemExtensao)
-                    .delete()
-                    .addOnSuccessListener {
-                        Toast.makeText(this, "Imagem excluída com sucesso!", Toast.LENGTH_SHORT).show()
+            // Remove do Storage
+            storageRef.delete()
+                .addOnSuccessListener {
+                    // Remove também do Firestore
+                    val firestore = FirebaseFirestore.getInstance()
 
-                        // Remove da lista da RecyclerView
-                        listaImagens.remove(nome)
-                        adapter.notifyDataSetChanged()
-                    }
-                    .addOnFailureListener { e ->
-                        Toast.makeText(this, "Erro ao excluir do Firestore: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Erro ao excluir do Storage: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
+                    // nomeImagem vem no formato "NomePt_NomeEs.jpg"
+                    val nomeSemExtensao = nome.removeSuffix(".jpg")
 
-    private fun tornarImagemPrivada(nome: String, onComplete: () -> Unit) {
-        val userId = auth.currentUser?.uid ?: return
-        val storageRefPrivada = storage.reference.child("arquivos/$userId/imagensPrivadas/$nome")
-        val storageRefPublica = storage.reference.child("arquivos/$userId/imagensPublicas/$nome")
-
-        // Pega os bytes da imagem privada
-        storageRefPublica.getBytes(Long.MAX_VALUE).addOnSuccessListener { bytes ->
-            // Sobe para a pasta pública
-            storageRefPrivada.putBytes(bytes).addOnSuccessListener {
-                // Apaga a imagem da pasta privada
-                storageRefPublica.delete().addOnSuccessListener {
-                    // Atualiza o Firestore, apenas o campo "visualizacao"
                     firestore.collection("users")
                         .document(userId)
                         .collection("imagens")
-                        .document(nome.removeSuffix(".jpg"))
-                        .update("visualizacao", "privada")
+                        .document(nomeSemExtensao)
+                        .delete()
                         .addOnSuccessListener {
-                            // Atualiza lista da RecyclerView
-                            listaImagens.clear()              // limpa a lista
-                            carregarNomesImagens()            // recarrega do Storage
+                            Toast.makeText(this, "Imagem excluída com sucesso!", Toast.LENGTH_SHORT)
+                                .show()
 
-                            Toast.makeText(this, "Imagem movida para privada!", Toast.LENGTH_SHORT).show()
-
-                            // Callback para Activity
-                            onComplete()
+                            // Remove da lista da RecyclerView
+                            listaImagens.remove(nome)
+                            adapter.notifyDataSetChanged()
                         }
                         .addOnFailureListener { e ->
-                            Toast.makeText(this, "Erro ao atualizar Firestore: ${e.message}", Toast.LENGTH_SHORT).show()
-                            onComplete()
+                            Toast.makeText(
+                                this,
+                                "Erro ao excluir do Firestore: ${e.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(
+                        this,
+                        "Erro ao excluir do Storage: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+        }
+
+        builder.setNegativeButton("Cancelar") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        builder.show()
+    }
+
+    private fun tornarImagemPrivada(nome: String, onComplete: () -> Unit) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Tornar Pública a Imagem")
+        builder.setMessage("Tem certeza que deseja tornar a imagem \"$nome\" privada?")
+
+        builder.setPositiveButton("Sim") { dialog, _ ->
+            dialog.dismiss()
+
+            val userId = auth.currentUser?.uid ?: return@setPositiveButton
+            val storageRefPrivada =
+                storage.reference.child("arquivos/$userId/imagensPrivadas/$nome")
+            val storageRefPublica =
+                storage.reference.child("arquivos/$userId/imagensPublicas/$nome")
+
+            // Pega os bytes da imagem privada
+            storageRefPublica.getBytes(Long.MAX_VALUE).addOnSuccessListener { bytes ->
+                // Sobe para a pasta pública
+                storageRefPrivada.putBytes(bytes).addOnSuccessListener {
+                    // Apaga a imagem da pasta privada
+                    storageRefPublica.delete().addOnSuccessListener {
+                        // Atualiza o Firestore, apenas o campo "visualizacao"
+                        firestore.collection("users")
+                            .document(userId)
+                            .collection("imagens")
+                            .document(nome.removeSuffix(".jpg"))
+                            .update("visualizacao", "privada")
+                            .addOnSuccessListener {
+                                // Atualiza lista da RecyclerView
+                                listaImagens.clear()              // limpa a lista
+                                carregarNomesImagens()            // recarrega do Storage
+
+                                Toast.makeText(
+                                    this,
+                                    "Imagem movida para privada!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+
+                                // Callback para Activity
+                                onComplete()
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(
+                                    this,
+                                    "Erro ao atualizar Firestore: ${e.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                onComplete()
+                            }
+                    }.addOnFailureListener { e ->
+                        Toast.makeText(
+                            this,
+                            "Erro ao apagar imagem pública: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        onComplete()
+                    }
                 }.addOnFailureListener { e ->
-                    Toast.makeText(this, "Erro ao apagar imagem pública: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "Erro ao enviar para pasta privada: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     onComplete()
                 }
             }.addOnFailureListener { e ->
-                Toast.makeText(this, "Erro ao enviar para pasta privada: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "Erro ao ler imagem pública: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
                 onComplete()
             }
-        }.addOnFailureListener { e ->
-            Toast.makeText(this, "Erro ao ler imagem pública: ${e.message}", Toast.LENGTH_SHORT).show()
-            onComplete()
         }
+
+        builder.setNegativeButton("Cancelar") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        builder.show()
     }
 }
