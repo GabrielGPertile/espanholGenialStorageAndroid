@@ -19,9 +19,9 @@
             android:layout_height="?attr/actionBarSize"
             android:background="#104e8b"
             android:title="Meus Vídeos Privados"
-            android:titleTextColor="@android:color/white"/>
+            android:titleTextColor="@android:color/white" />
 
-        <!-- CONTEÚDO DA TELA (LISTA DE IMAGENS) -->
+        <!-- CONTEÚDO DA TELA (LISTA DE VÍDEOS) -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -31,11 +31,24 @@
                 android:id="@+id/recyclerViewVideos"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:clipToPadding="false"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:clipToPadding="false"/>
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- BOTÃO DE AJUDA / CASO DE USO -->
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnCasoDeUso"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="Caso de Uso"
+                android:layout_margin="16dp"
+                app:tint="@android:color/white"
+                app:backgroundTint="#104e8b"
+                app:srcCompat="@android:drawable/ic_menu_help"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 
@@ -53,5 +66,6 @@
         app:itemIconTint="@android:color/white"
         app:itemTextColor="@android:color/black"
         app:itemBackground="@drawable/item_quadrado"
-        app:itemTextAppearance="@style/NavDrawerText"/>
+        app:itemTextAppearance="@style/NavDrawerText" />
+
 </androidx.drawerlayout.widget.DrawerLayout>
