@@ -4,22 +4,26 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.text.HtmlCompat
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.espanholgenialstorageandroid.R
-import com.example.espanholgenialstorageandroid.adapter.PrivateAudioAdapter
 import com.example.espanholgenialstorageandroid.adapter.PrivateVideoAdapter
 import com.example.espanholgenialstorageandroid.fragment.VisualizarVideoPrivadoDialogFragment
 import com.example.espanholgenialstorageandroid.model.VideoDataClass
 import com.example.espanholgenialstorageandroid.strategy.SanitizeFileNameInterface
 import com.example.espanholgenialstorageandroid.strategy.SanitizeFileNameStrategy
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import android.text.SpannableStringBuilder
+import android.text.style.ImageSpan
+import android.widget.TextView
 
 class ListarVideoPrivadosAcitivity : BaseDrawerActivity()
 {
@@ -28,6 +32,7 @@ class ListarVideoPrivadosAcitivity : BaseDrawerActivity()
     private val listaVideos = mutableListOf<String>()
     private lateinit var selecionarVideoLauncher: ActivityResultLauncher<String>
     private var videoSelecionadoUri: Uri? = null
+    private lateinit var btnCasoDeUso: FloatingActionButton
     private lateinit var auth: FirebaseAuth
     private lateinit var storage: FirebaseStorage
     private lateinit var firestore: FirebaseFirestore
@@ -36,6 +41,8 @@ class ListarVideoPrivadosAcitivity : BaseDrawerActivity()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.listar_videos_privados)
+
+        btnCasoDeUso = findViewById(R.id.btnCasoDeUso)
 
         // Configura o launcher
         selecionarVideoLauncher = registerForActivityResult(
@@ -78,6 +85,10 @@ class ListarVideoPrivadosAcitivity : BaseDrawerActivity()
         recyclerView.adapter = adapter
 
         carregarNomesVideos()
+
+        btnCasoDeUso.setOnClickListener {
+            explicacoes()
+        }
     }
 
     private fun carregarNomesVideos()
@@ -95,6 +106,51 @@ class ListarVideoPrivadosAcitivity : BaseDrawerActivity()
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Erro ao carregar: ${e.message}", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun explicacoes() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Caso de Uso - Vídeos Privados")
+
+        val html = """
+        🎬 <b>Funcionalidades desta tela:</b><br><br>
+        📂 Aqui são exibidos todos os vídeos que você enviou e manteve <b>privados</b> no seu armazenamento.<br><br>
+
+        Os botões disponíveis em cada vídeo realizam as seguintes ações:<br><br>
+
+        👁️ — Visualizar o vídeo.<br><br>
+        ✏️ — Editar ou substituir o arquivo.<br><br>
+        🗑️ — Excluir permanentemente.<br><br>
+        [share] — Torna o vídeo <b>público</b> para outras pessoas.<br><br>
+
+        💡 Dica: mantenha nomes simples e sem caracteres especiais ao enviar ou editar vídeos.
+    """.trimIndent()
+
+        val spannable = SpannableStringBuilder(
+            HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        )
+
+        // substitui o marcador [share] pelo ícone real
+        val start = spannable.indexOf("[share]")
+        if (start != -1) {
+            val end = start + "[share]".length
+            val drawable = getDrawable(android.R.drawable.ic_menu_share)
+            drawable?.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
+            val imageSpan = ImageSpan(drawable!!, ImageSpan.ALIGN_BOTTOM)
+            spannable.replace(start, end, " ")
+            spannable.setSpan(imageSpan, start, start + 1, 0)
+        }
+
+        val textView = TextView(this).apply {
+            text = spannable
+            setPadding(40, 20, 40, 20)
+        }
+
+        builder.setView(textView)
+        builder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
     }
 
     private fun visualizarVideo(nome: String) {
