@@ -2,14 +2,20 @@ package com.example.espanholgenialstorageandroid.activity
 
 import android.net.Uri
 import android.os.Bundle
+import android.text.SpannableStringBuilder
+import android.text.style.ImageSpan
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
+import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.espanholgenialstorageandroid.R
 import com.example.espanholgenialstorageandroid.adapter.PublicVideoAdapter
 import com.example.espanholgenialstorageandroid.fragment.VisualizarVideoPublicDialogFragment
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -22,6 +28,7 @@ class ListarVideoPublicosAcitivity : BaseDrawerActivity()
     private val listaVideos = mutableListOf<String>()
     private lateinit var selecionarVideoLauncher: ActivityResultLauncher<String>
     private var videoSelecionadoUri: Uri? = null
+    private lateinit var btnCasoDeUso: FloatingActionButton
     private lateinit var auth: FirebaseAuth
     private lateinit var storage: FirebaseStorage
     private lateinit var firestore: FirebaseFirestore
@@ -29,6 +36,8 @@ class ListarVideoPublicosAcitivity : BaseDrawerActivity()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.listar_videos_publicos)
+
+        btnCasoDeUso = findViewById(R.id.btnCasoDeUso)
 
         // Configura o launcher
         selecionarVideoLauncher = registerForActivityResult(
@@ -70,6 +79,10 @@ class ListarVideoPublicosAcitivity : BaseDrawerActivity()
         recyclerView.adapter = adapter
 
         carregarNomesVideos()
+
+        btnCasoDeUso.setOnClickListener {
+            explicacoes()
+        }
     }
 
     private fun carregarNomesVideos()
@@ -87,6 +100,48 @@ class ListarVideoPublicosAcitivity : BaseDrawerActivity()
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Erro ao carregar: ${e.message}", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun explicacoes() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Caso de Uso - Vídeos Públicos")
+
+        val html = """
+        🎬 <b>Funcionalidades desta tela:</b><br><br>
+        📂 Aqui são exibidos todos os vídeos que você enviou e manteve <b>públicos</b> no seu armazenamento.<br><br>
+
+        Os botões disponíveis em cada vídeo realizam as seguintes ações:<br><br>
+
+        👁️ — Visualizar o vídeo.<br><br>
+        🗑️ — Excluir permanentemente.<br><br>
+        [share] — Torna o vídeo <b>privado</b> para outras pessoas.<br><br>
+    """.trimIndent()
+
+        val spannable = SpannableStringBuilder(
+            HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        )
+
+        // substitui o marcador [share] pelo ícone real
+        val start = spannable.indexOf("[share]")
+        if (start != -1) {
+            val end = start + "[share]".length
+            val drawable = getDrawable(android.R.drawable.ic_menu_share)
+            drawable?.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
+            val imageSpan = ImageSpan(drawable!!, ImageSpan.ALIGN_BOTTOM)
+            spannable.replace(start, end, " ")
+            spannable.setSpan(imageSpan, start, start + 1, 0)
+        }
+
+        val textView = TextView(this).apply {
+            text = spannable
+            setPadding(40, 20, 40, 20)
+        }
+
+        builder.setView(textView)
+        builder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
     }
 
     private fun visualizarVideo(nome: String) {
