@@ -36,6 +36,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:clipToPadding="false"/>
+
+            <!-- BOTÃO DE AJUDA / CASO DE USO -->
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnCasoDeUso"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="Caso de Uso"
+                android:layout_margin="16dp"
+                app:tint="@android:color/white"
+                app:backgroundTint="#104e8b"
+                app:srcCompat="@android:drawable/ic_menu_help"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 
