@@ -284,81 +284,136 @@ class ListarAudioPrivadosAcitivity : BaseDrawerActivity()
     }
 
     private fun excluirAudio(nome: String) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val storageRef = storage.reference.child("arquivos/$userId/audiosPrivados/$nome")
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Excluir Audio")
+        builder.setMessage("Tem certeza que deseja excluir o audio \"$nome\" permanentemente?")
 
-        // Remove do Storage
-        storageRef.delete()
-            .addOnSuccessListener {
-                // Remove também do Firestore
-                val firestore = FirebaseFirestore.getInstance()
+        builder.setPositiveButton("Sim") { dialog, _ ->
+            dialog.dismiss()
 
-                // nomeImagem vem no formato "NomePt_NomeEs.jpg"
-                val nomeSemExtensao = nome.removeSuffix(".jpg")
+            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@setPositiveButton
+            val storageRef = storage.reference.child("arquivos/$userId/audiosPrivados/$nome")
 
-                firestore.collection("users")
-                    .document(userId)
-                    .collection("audios")
-                    .document(nomeSemExtensao)
-                    .delete()
-                    .addOnSuccessListener {
-                        Toast.makeText(this, "Imagem excluída com sucesso!", Toast.LENGTH_SHORT).show()
+            // Remove do Storage
+            storageRef.delete()
+                .addOnSuccessListener {
+                    // Remove também do Firestore
+                    val firestore = FirebaseFirestore.getInstance()
 
-                        // Remove da lista da RecyclerView
-                        listaAudios.remove(nome)
-                        adapter.notifyDataSetChanged()
-                    }
-                    .addOnFailureListener { e ->
-                        Toast.makeText(this, "Erro ao excluir do Firestore: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Erro ao excluir do Storage: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
+                    // nomeImagem vem no formato "NomePt_NomeEs.jpg"
+                    val nomeSemExtensao = nome.removeSuffix(".jpg")
 
-    private fun tornarAudioPublico(nome: String, onComplete: () -> Unit) {
-        val userId = auth.currentUser?.uid ?: return
-        val storageRefPrivada = storage.reference.child("arquivos/$userId/audiosPrivados/$nome")
-        val storageRefPublica = storage.reference.child("arquivos/$userId/audiosPublicos/$nome")
-
-        // Pega os bytes da imagem privada
-        storageRefPrivada.getBytes(Long.MAX_VALUE).addOnSuccessListener { bytes ->
-            // Sobe para a pasta pública
-            storageRefPublica.putBytes(bytes).addOnSuccessListener {
-                // Apaga a imagem da pasta privada
-                storageRefPrivada.delete().addOnSuccessListener {
-                    // Atualiza o Firestore, apenas o campo "visualizacao"
                     firestore.collection("users")
                         .document(userId)
                         .collection("audios")
-                        .document(nome.removeSuffix(".mp3"))
-                        .update("visualizacao", "publico")
+                        .document(nomeSemExtensao)
+                        .delete()
                         .addOnSuccessListener {
-                            // Atualiza lista da RecyclerView
-                            listaAudios.clear()              // limpa a lista
-                            carregarNomesAudios()            // recarrega do Storage
+                            Toast.makeText(this, "Imagem excluída com sucesso!", Toast.LENGTH_SHORT)
+                                .show()
 
-                            Toast.makeText(this, "Audio movido para público!", Toast.LENGTH_SHORT).show()
-
-                            // Callback para Activity
-                            onComplete()
+                            // Remove da lista da RecyclerView
+                            listaAudios.remove(nome)
+                            adapter.notifyDataSetChanged()
                         }
                         .addOnFailureListener { e ->
-                            Toast.makeText(this, "Erro ao atualizar Firestore: ${e.message}", Toast.LENGTH_SHORT).show()
-                            onComplete()
+                            Toast.makeText(
+                                this,
+                                "Erro ao excluir do Firestore: ${e.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(
+                        this,
+                        "Erro ao excluir do Storage: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+        }
+
+        builder.setNegativeButton("Cancelar") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        builder.show()
+    }
+
+    private fun tornarAudioPublico(nome: String, onComplete: () -> Unit) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Tornar Público o Aúdio")
+        builder.setMessage("Tem certeza que deseja tornar o aúdio \"$nome\" público?")
+
+
+        builder.setPositiveButton("Sim") { dialog, _ ->
+            dialog.dismiss()
+
+            val userId = auth.currentUser?.uid ?: return@setPositiveButton
+            val storageRefPrivada = storage.reference.child("arquivos/$userId/audiosPrivados/$nome")
+            val storageRefPublica = storage.reference.child("arquivos/$userId/audiosPublicos/$nome")
+
+            // Pega os bytes da imagem privada
+            storageRefPrivada.getBytes(Long.MAX_VALUE).addOnSuccessListener { bytes ->
+                // Sobe para a pasta pública
+                storageRefPublica.putBytes(bytes).addOnSuccessListener {
+                    // Apaga a imagem da pasta privada
+                    storageRefPrivada.delete().addOnSuccessListener {
+                        // Atualiza o Firestore, apenas o campo "visualizacao"
+                        firestore.collection("users")
+                            .document(userId)
+                            .collection("audios")
+                            .document(nome.removeSuffix(".mp3"))
+                            .update("visualizacao", "publico")
+                            .addOnSuccessListener {
+                                // Atualiza lista da RecyclerView
+                                listaAudios.clear()              // limpa a lista
+                                carregarNomesAudios()            // recarrega do Storage
+
+                                Toast.makeText(
+                                    this,
+                                    "Audio movido para público!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+
+                                // Callback para Activity
+                                onComplete()
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(
+                                    this,
+                                    "Erro ao atualizar Firestore: ${e.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                onComplete()
+                            }
+                    }.addOnFailureListener { e ->
+                        Toast.makeText(
+                            this,
+                            "Erro ao apagar audio privado: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        onComplete()
+                    }
                 }.addOnFailureListener { e ->
-                    Toast.makeText(this, "Erro ao apagar audio privado: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "Erro ao enviar para pasta pública: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     onComplete()
                 }
             }.addOnFailureListener { e ->
-                Toast.makeText(this, "Erro ao enviar para pasta pública: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Erro ao ler audio privado: ${e.message}", Toast.LENGTH_SHORT)
+                    .show()
                 onComplete()
             }
-        }.addOnFailureListener { e ->
-            Toast.makeText(this, "Erro ao ler audio privado: ${e.message}", Toast.LENGTH_SHORT).show()
-            onComplete()
         }
+
+        builder.setNegativeButton("Cancelar") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        builder.show()
     }
 }
