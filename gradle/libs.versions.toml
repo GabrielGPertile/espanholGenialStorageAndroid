@@ -9,6 +9,7 @@ appcompat = "1.7.0"
 material = "1.12.0"
 googleGmsGoogleServices = "4.4.2"
 firebaseFirestoreKtx = "25.0.0"
+firebaseDatabase = "22.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -23,6 +24,7 @@ firebase-database-ktx = { group = "com.google.firebase", name = "firebase-databa
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx" }
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version = "21.2.0" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
+firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
